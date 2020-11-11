@@ -1,0 +1,20 @@
+<div *ngIf="diffstudy">
+  <div>
+    <label>Name: </label> {{diffstudy.studyName}}
+  </div>
+  <div>
+    <label>Description: </label> {{diffstudy.description}}
+  </div>
+  <div>
+    <label>Network1: </label> {{diffstudy.network1Id}}
+  </div>
+  <div>
+    <label>Network2: </label> {{diffstudy.network2Id}}
+  </div>
+  <div>
+    <label>Zone: </label> {{diffstudy.zone}}
+  </div>
+    <br />
+    <span class="button is-small btn-danger" (click)='deleteDiffstudy()'>Delete</span>
+  <hr/>
+</div>

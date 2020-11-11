@@ -1,0 +1,21 @@
+<!--<h2>Diff-studies</h2>-->
+
+<div>
+	<div class="sidebar"> 
+		<div *ngFor="let diffstudy of diffstudies | async">
+			<diffstudy-details [diffstudy]='diffstudy'></diffstudy-details>
+		</div>
+	</div>
+</div>
+
+<!--
+	<div *ngFor="let diffstudy of diffstudies | async" style="width: 600px;">
+  <diffstudy-details [diffstudy]='diffstudy'></diffstudy-details>
+</div>
+
+-->
+<!-- 
+<div>
+  <button type="button" class="button btn-danger" (click)='deleteDiffstudies()'>Delete All</button>
+</div>
+-->

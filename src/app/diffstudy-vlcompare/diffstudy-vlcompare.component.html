@@ -1,0 +1,92 @@
+<!--<h2>Network comparison</h2>-->
+<div>
+  <div class="sidebar">
+    <div class="form-group">
+      <label for="study">Study</label>
+      <select id="study" class="form-control" [(ngModel)]="study" (ngModelChange)="onChangeDiffStudy($event)">
+        <option *ngFor="let stud of studies;" [ngValue]="stud">{{stud.studyName}}</option>
+      </select>
+    </div>
+    <!--
+    <div class="form-group">
+      <label>Voltage Level</label>
+      <input class="form-control" type="text" [(ngModel)]="vlId">
+    </div>
+    -->
+    <div class="form-group">
+      <label for="vlId">Voltage level</label>
+      <select id="vlId" class="form-control" [(ngModel)]="vlId">
+        <option *ngFor="let vl of vlevels;" [ngValue]="vl">{{vl}}</option>
+      </select>
+    </div>
+
+    <button type="button" class="btn btn-info" (click)="networkDiff()">Submit</button>
+  </div>
+
+  <div>
+    <div *ngIf="showDiagram == true">
+      <p-tabView>
+        <p-tabPanel header="Network1">
+          <span class="label">{{study["network1Id"]}}</span>
+          <object id="obj1" style="width:100%; height:800px;" type="image/svg+xml">
+            <param name="src" value="{{getUrl(network1)}}">
+          </object>
+        </p-tabPanel>
+        <p-tabPanel header="Network2">
+          <span class="label">{{study["network2Id"]}}</span>
+          <object id="obj2" style="width:100%; height:800px;" type="image/svg+xml">
+            <param name="src" value="{{getUrl(network2)}}">
+          </object>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+
+    <hr>
+
+    <div *ngIf="diffResult">
+      <h3>Differences</h3>
+      <div *ngIf="diffResult['diff.VoltageLevels'].length == 0">
+        <span>No Differences</span>
+      </div>
+
+      <div class="card" *ngFor="let vl of diffResult['diff.VoltageLevels']">
+        <div class="card-header">
+          <div class="col-sm-6">VOLTAGE LEVEL: {{vlId}}</div>
+          <div class="col-sm-6">is Different: {{vl['vl.isDifferent']}}</div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-2 border"></div>
+            <div class="col-sm-4 border"><span class="label">{{diffResult.network1}}</span></div>
+            <div class="col-sm-4 border"><span class="label">{{diffResult.network2}}</span></div>
+            <div class="col-sm-2 border"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 border"><span class="label">No Bus</span></div>
+            <div class="col-sm-4 border">{{vl['vl.noBus1']}}</div>
+            <div class="col-sm-4 border">{{vl['vl.noBus2']}}</div>
+            <div class="col-sm-2 border"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 border"><span class="label label-default">minV</span></div>
+            <div class="col-sm-4 border">{{vl['vl.minV1']}}</div>
+            <div class="col-sm-4 border">{{vl['vl.minV2']}}</div>
+            <div class="col-sm-2 border">{{vl['vl.minV-delta']}}</div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2 border"><span class="label label-default">maxV</span></div>
+            <div class="col-sm-4 border">{{vl['vl.maxV1']}}</div>
+            <div class="col-sm-4 border">{{vl['vl.maxV2']}}</div>
+            <div class="col-sm-2 border">{{vl['vl.maxV-delta']}}</div>
+          </div>
+          <div class="row" *ngFor="let sw of vl['vl.switchesStatus-delta']">
+            <div class="col-sm-2 border"><span class="label label-default">{{sw}}</span></div>
+            <div class="col-sm-4 border">{{vl['vl.switchesStatusV1'][sw]}}</div>
+            <div class="col-sm-4 border">{{vl['vl.switchesStatusV2'][sw]}}</div>
+            <div class="col-sm-2 border"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

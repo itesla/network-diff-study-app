@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~primeng/resources/primeng.min.css';
+@import '~primeng/resources/themes/bootstrap4-light-blue/theme.css';
+
+.tablehead {
+    background-color: lightgray;
+    font-weight: 600;
+}
+
+.label {
+    padding-left: 5px;
+    padding-right: 10px;
+    font-weight: 600;
+}
