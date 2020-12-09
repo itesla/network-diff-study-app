@@ -2,6 +2,7 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~primeng/resources/primeng.min.css';
 @import '~primeng/resources/themes/bootstrap4-light-blue/theme.css';
+@import "~leaflet/dist/leaflet.css";
 
 .tablehead {
     background-color: lightgray;

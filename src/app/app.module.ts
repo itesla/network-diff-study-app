@@ -24,6 +24,7 @@ import { Observable } from 'rxjs/Observable';
 import { ApiModule } from './api-client/api.module';
 import { DiffstudyVlcompareComponent } from './diffstudy-vlcompare/diffstudy-vlcompare.component';
 import { NetworkDiffComponent} from "./network-diff/network-diff.component";
+import {LeafletModule} from "@asymmetrik/ngx-leaflet";
 
 
 @NgModule({
@@ -36,14 +37,15 @@ import { NetworkDiffComponent} from "./network-diff/network-diff.component";
     DiffstudyVlcompareComponent,
     NetworkDiffComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    ApiModule,
-    TabViewModule
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        AppRoutingModule,
+        HttpClientModule,
+        ApiModule,
+        TabViewModule,
+        LeafletModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

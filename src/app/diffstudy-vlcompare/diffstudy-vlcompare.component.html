@@ -25,6 +25,10 @@
 
   <div>
     <div *ngIf="showDiagram == true">
+
+      <hr/>
+
+
       <p-tabView>
         <p-tabPanel header="Network1">
           <span class="label">{{study["network1Id"]}}</span>
@@ -41,12 +45,20 @@
       </p-tabView>
     </div>
 
-    <hr>
-
     <div *ngIf="diffResult">
-      <h3>Differences</h3>
+
+      <hr>
+
+      <div class="map"
+           leaflet
+           [leafletOptions]="mapOptions"
+           (leafletMapReady)="onMapReady($event)">
+      </div>
+
+      <hr>
+
       <div *ngIf="diffResult['diff.VoltageLevels'].length == 0">
-        <span>No Differences</span>
+        <span>No Differences in voltage level {{vlId}}</span>
       </div>
 
       <div class="card" *ngFor="let vl of diffResult['diff.VoltageLevels']">

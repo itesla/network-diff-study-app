@@ -45,5 +45,8 @@ export class DiffstudyService {
     return this.http.post(`${this.baseUrl}/` +  newdiffstudy.diffStudyname + `/study/` + newdiffstudy.case1Uuid + `/` + newdiffstudy.case2Uuid, formData);
   }
 
+  getSubstationsCoords(name: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getsubscoords?diffStudyName=${name}`);
+  }
 }
 

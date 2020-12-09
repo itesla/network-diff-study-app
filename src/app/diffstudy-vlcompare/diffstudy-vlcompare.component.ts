@@ -10,95 +10,165 @@ import {ApiService} from '../api-client/api/api';
 import {NetworkDiffResponse} from '../api-client/model/models';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
+import {
+  FeatureGroup,
+  icon,
+  latLng,
+  Map,
+  marker,
+  point,
+  tileLayer
+} from 'leaflet';
 
 @Component({
   selector: 'comparevl',
   templateUrl: './diffstudy-vlcompare.component.html',
   styleUrls: ['./diffstudy-vlcompare.component.css']
 })
+
 export class DiffstudyVlcompareComponent implements OnInit {
   network1: string;
   network2: string;
   vlId: string;
+  subsDict = {};
   diffResult: NetworkDiffResponse;
   studies: Diffstudy[];
   study: Object;
   vlevels: string[];
   showDiagram: boolean;
 
+  mapOptions: any;
+  streetmap: any;
+  markersFeaturesGroup: FeatureGroup = new FeatureGroup();
+  franceCenteredCoords = latLng(46.624738528968436, 2.4264306819068198);
+
+  map: Map;
+
   constructor(protected apiService: ApiService, protected diffstudyService: DiffstudyService) {
   }
 
   ngOnInit(): void {
-    this.diffstudyService.getDiffstudyList().subscribe((res) => this.onStudyLoaded(res));
+    this.streetmap = tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        maxZoom: 18,
+        detectRetina: true,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      });
+
+    this.mapOptions = {
+      layers: [this.streetmap, this.markersFeaturesGroup],
+      zoom: 6,
+      center: this.franceCenteredCoords
+    };
+
+    this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
+      this.studies = studiesListRes;
+    });
   }
 
   onChangeDiffStudy(study) {
-    this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe((res) => this.onVoltageLevelsLoaded(res));
-  }
+    this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe(vlevelsRes => {
+      this.subsDict = {};
 
-  private onVoltageLevelsLoaded(res: Object) {
-    let temp = Object.entries(res);
-    if (this.study['zone'] === undefined || this.study['zone'] == 0) {
-      this.vlevels = new Array(temp.length);
-      for (let i = 0; i < temp.length; i++) {
-        this.vlevels[i] = res[i]['id'];
-      }
-    } else {
-      var scount = 0;
-
-      for (let i = 0; i < temp.length; i++) {
-        if (res[i]['substationId'].localeCompare(this.study['zone'][0]) == 0) {
-          scount = scount + 1;
+      if (this.study['zone'] === undefined || this.study['zone'] == 0) {
+        let vlevelsSize = Object.keys(vlevelsRes).length;
+        this.vlevels = new Array(vlevelsSize);
+        for (let i = 0; i < vlevelsSize; i++) {
+          this.vlevels[i] = vlevelsRes[i]['id'];
         }
-      }
+      } else {
+        let vLevels = [];
 
-      this.vlevels = new Array(scount);
-      var icount = 0;
-      for (let i = 0; i < temp.length; i++) {
-        if (res[i]['substationId'].localeCompare(this.study['zone'][0]) == 0) {
-          this.vlevels[icount] = res[i]['id'];
-          icount = icount + 1;
-        }
-      }
-    }
-  }
+        let subVoltageMap = Object.values(vlevelsRes).reduce((subVoltageMap, item) => {
+          if (this.study['zone'].includes(item.substationId)) {
+            const asub = (subVoltageMap[item.substationId] || []);
+            asub.push(item.id);
+            vLevels.push(item.id);
+            subVoltageMap[item.substationId] = asub;
+          }
+          return subVoltageMap;
+        }, {});
+        this.subsDict = subVoltageMap;
 
-  onStudyLoaded(stud: Diffstudy[]) {
-    this.studies = stud;
+        this.vlevels = vLevels;
+      }
+    });
   }
 
   networkDiff() {
-    this.network1 = "";
-    this.network2 = "";
-    this.showDiagram = false;
-    this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(res => this.onNetworkDiffSuccess0(res));
+    let network1Uuid = "";
+    let network2Uuid = "";
+    let showDiagram = false;
+    let diffResult: NetworkDiffResponse;
+
+    //clean global status
+    this.network1 = network1Uuid;
+    this.network2 = network2Uuid;
+    this.showDiagram = showDiagram;
+    this.diffResult = diffResult;
+
+    this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
+      network1Uuid = diffStudyRes['network1Uuid'];
+      network2Uuid = diffStudyRes['network2Uuid'];
+      this.apiService.networksNetwork1UuidDiffNetwork2UuidVlVlIdPost(network1Uuid, network2Uuid, this.vlId)
+        .subscribe(diffNetworksVlRes => {
+          diffResult = diffNetworksVlRes;
+          const vlevels = diffResult["diff.VoltageLevels"];
+          let switchestatus = [];
+          if (vlevels === undefined || vlevels.length == 0) {
+            //same vl data
+          } else {
+            //vl data differs
+            switchestatus = vlevels[0]["vl.switchesStatus-delta"];
+            if (switchestatus === undefined || switchestatus.length == 0) {
+              //same switches config
+            } else {
+              //switches config differs
+              showDiagram = true;
+            }
+          }
+
+          //set global status
+          this.network1 = network1Uuid;
+          this.network2 = network2Uuid;
+          this.showDiagram = showDiagram;
+          this.diffResult = diffResult;
+
+          //shows substations markers on the map
+          this.placeSubstationsMarkersMap(this.study['studyName']);
+        });
+
+    });
   }
 
-  onNetworkDiffSuccess(res: NetworkDiffResponse): void {
-    this.diffResult = res;
-    const vlevels = this.diffResult["diff.VoltageLevels"];
-    const switchestatus = vlevels[0]["vl.switchesStatus-delta"];
-    if (vlevels === undefined || vlevels.length == 0) {
-      this.network1 = "";
-      this.network2 = "";
-      this.showDiagram = false;
-    }
-    if (switchestatus === undefined || switchestatus.length == 0) {
-      this.network1 = "";
-      this.network2 = "";
-      this.showDiagram = false;
-    } else {
-      this.showDiagram = true;
-    }
-  }
+  placeSubstationsMarkersMap(studyName: string) {
+    this.markersFeaturesGroup.clearLayers();
+    this.diffstudyService.getSubstationsCoords(studyName).subscribe(resGeo => {
 
-  onNetworkDiffSuccess0(res: Object): void {
-    this.network1 = res['network1Uuid'];
-    this.network2 = res['network2Uuid'];
+      for (let i = 0; i < resGeo.length; i++) {
+        let vlevelsHtml = '<h4>' + resGeo[i].id + '</h4>';
+        for (let vli = 0; vli < this.subsDict[resGeo[i].id].length; vli++) {
+          vlevelsHtml = vlevelsHtml + '<p>' + this.subsDict[resGeo[i].id][vli] + '</p>';
+        }
 
-    this.apiService.networksNetwork1UuidDiffNetwork2UuidVlVlIdPost(this.network1, this.network2, this.vlId)
-      .subscribe(res => this.onNetworkDiffSuccess(res));
+        let substationMarker = marker([resGeo[i].coordinate.lat, resGeo[i].coordinate.lon], {
+          icon: icon({
+            iconSize: [30, 30],
+            iconUrl: (this.subsDict[resGeo[i].id].includes(this.vlId)) ? 'assets/substation_blue.png' : 'assets/substation.png'
+          })
+        }).on('click', () => {
+        }).bindPopup(vlevelsHtml);
+        substationMarker.addTo(this.markersFeaturesGroup);
+      }
+
+      if (this.markersFeaturesGroup.getLayers().length >0) {
+        this.map.fitBounds(this.markersFeaturesGroup.getBounds(), {
+          padding: point(48, 48),
+          animate: true
+        });
+      }
+
+    });
   }
 
   getUrl(networkId: string) {
@@ -110,11 +180,15 @@ export class DiffstudyVlcompareComponent implements OnInit {
       if (switchestatus === undefined || switchestatus.length == 0) {
         return "";
       } else {
-        var url = 'http://localhost:6007/v1/svg/network/' + networkId + '/vl/' + this.vlId + "/";
+        let url = 'http://localhost:6007/v1/svg/network/' + networkId + '/vl/' + this.vlId + "/";
         const diffs = this.diffResult["diff.VoltageLevels"][0]["vl.switchesStatus-delta"].join(',');
         return url + diffs;
       }
     }
+  }
+
+  onMapReady(map: Map) {
+    this.map = map;
   }
 
 }
