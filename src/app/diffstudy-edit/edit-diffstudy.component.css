@@ -1,0 +1,17 @@
+.sidebar {
+    position: absolute;
+    /* top: 60px; */
+    left: 0;
+    height: 100%;
+    width: 600px;
+    align-items: center;
+    /* background-color: #1976d2; */
+    /* color: white; */
+    font-weight: 600;
+    margin-left: 20px;
+    margin-bottom: 20px;
+  }
+
+.button {
+  margin-right: 20px;
+}

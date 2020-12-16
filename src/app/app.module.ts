@@ -25,6 +25,7 @@ import { ApiModule } from './api-client/api.module';
 import { DiffstudyVlcompareComponent } from './diffstudy-vlcompare/diffstudy-vlcompare.component';
 import { NetworkDiffComponent} from "./network-diff/network-diff.component";
 import {LeafletModule} from "@asymmetrik/ngx-leaflet";
+import {EditDiffStudyComponent} from "./diffstudy-edit/edit-diffstudy.component";
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import {LeafletModule} from "@asymmetrik/ngx-leaflet";
     SearchCasesComponent,
     CreateDiffstudyComponent,
     DiffstudyVlcompareComponent,
-    NetworkDiffComponent
+    NetworkDiffComponent,
+    EditDiffStudyComponent
   ],
     imports: [
         BrowserModule,

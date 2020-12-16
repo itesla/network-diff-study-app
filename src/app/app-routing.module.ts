@@ -12,6 +12,7 @@ import {SearchCasesComponent} from './search-cases/search-cases.component';
 import {CreateDiffstudyComponent} from './create-diffstudy/create-diffstudy.component';
 import {DiffstudyVlcompareComponent} from './diffstudy-vlcompare/diffstudy-vlcompare.component';
 import {NetworkDiffComponent} from "./network-diff/network-diff.component";
+import {EditDiffStudyComponent} from "./diffstudy-edit/edit-diffstudy.component";
 
 const routes: Routes = [
   {path: '', redirectTo: 'diffstudy', pathMatch: 'full'},
@@ -19,7 +20,8 @@ const routes: Routes = [
   {path: 'searchcase', component: SearchCasesComponent},
   {path: 'createstudy', component: CreateDiffstudyComponent},
   {path: 'comparevl', component: DiffstudyVlcompareComponent},
-  {path: 'network-diff', component: NetworkDiffComponent}
+  {path: 'network-diff', component: NetworkDiffComponent},
+  {path: 'editStudy/:id', component: EditDiffStudyComponent}
 ];
 
 @NgModule({

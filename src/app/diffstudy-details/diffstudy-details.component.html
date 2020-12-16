@@ -15,6 +15,7 @@
     <label>Zone: </label> {{diffstudy.zone}}
   </div>
     <br />
-    <span class="button is-small btn-danger" (click)='deleteDiffstudy()'>Delete</span>
+    <span class="button btn-outline-info" [routerLink]="['/editStudy', diffstudy.studyName ]" >Edit zone</span>
+    <span class="button btn-outline-danger" (click)='deleteDiffstudy()'>Delete</span>
   <hr/>
 </div>

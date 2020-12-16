@@ -1,0 +1,43 @@
+<div>
+  <div class="sidebar">
+    <div *ngIf="diffStudy">
+      <div>
+        <label>Name: </label> {{diffStudy.diffStudyName}}
+      </div>
+      <div>
+        <label>Description: </label> {{diffStudy.description}}
+      </div>
+      <div>
+        <label>Zone: </label> {{selectedSubs | slice}}
+      </div>
+      <br/>
+
+      <button type="button" class="btn btn-info" (click)="submitZone()">Update</button>
+      <div [hidden]="!submitted">
+        <div *ngIf="!updateErrors" class="alert-success">
+          <div>study's zone updated to: {{selectedSubs | slice}}</div>
+        </div>
+        <div *ngIf="updateErrors" class="alert-warning">
+          <div>Could not update this study's zone</div>
+        </div>
+      </div>
+
+      <hr/>
+    </div>
+
+    <h4>Select substations for this study's zone</h4>
+
+    <span class="button btn-outline-info" (click)='clearSelectedZone()'>Clear selection</span>
+
+    <div class="form-check" *ngFor="let sub of subsList">
+      <input class="form-check-input" (change)="onChange(sub, $event.target.checked)" name="{{ sub }}" type="checkbox" id="{{sub}}">
+      <label class="form-check-label" for="{{sub}}">
+        {{sub}}
+      </label>
+    </div>
+
+
+
+  </div>
+
+</div>

@@ -48,5 +48,12 @@ export class DiffstudyService {
   getSubstationsCoords(name: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/getsubscoords?diffStudyName=${name}`);
   }
+
+  setDiffstudyZone(studyName: string, zone: string[]): Observable<Object> {
+    var formData: any = new FormData();
+    formData.append("zone", zone);
+    return this.http.post(`${this.baseUrl}/` +  studyName + `/zone`, formData);
+  }
+
 }
 
