@@ -64,9 +64,11 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
+    this.showDiagram = false;
   }
 
   onChangeDiffStudy(study) {
+    this.showDiagram = false;
     this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe(vlevelsRes => {
       this.subsDict = {};
 
@@ -117,15 +119,10 @@ export class DiffstudyVlcompareComponent implements OnInit {
           let switchestatus = [];
           if (vlevels === undefined || vlevels.length == 0) {
             //same vl data
+            showDiagram = false;
           } else {
             //vl data differs
-            switchestatus = vlevels[0]["vl.switchesStatus-delta"];
-            if (switchestatus === undefined || switchestatus.length == 0) {
-              //same switches config
-            } else {
-              //switches config differs
-              showDiagram = true;
-            }
+            showDiagram = true;
           }
 
           //set global status
@@ -184,6 +181,16 @@ export class DiffstudyVlcompareComponent implements OnInit {
         const diffs = this.diffResult["diff.VoltageLevels"][0]["vl.switchesStatus-delta"].join(',');
         return url + diffs;
       }
+    }
+  }
+
+  getUrl2(network1Id: string, network2Id: string) {
+    if ((network1Id === undefined || network1Id.length == 0) || (network2Id === undefined || network2Id.length == 0)
+        || (this.vlId === undefined || this.vlId.length == 0)) {
+      return "";
+    } else {
+      let url = 'http://localhost:6007/v1/svg2/network/' + network1Id + '/' + network2Id + '/vl/' + this.vlId;
+      return url;
     }
   }
 
