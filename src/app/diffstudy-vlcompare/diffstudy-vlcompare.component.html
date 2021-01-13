@@ -98,6 +98,76 @@
           </div>
         </div>
       </div>
+
+    <div *ngIf="diffResult['diff.Branches'].length == 0">
+      <span>No Differences in branches {{vlId}}</span>
     </div>
+
+    <div class="card" *ngFor="let branch of diffResult['diff.Branches']">
+      <div class="card-header">
+        <div class="col-sm-6">BRANCH: {{branch['branch.branchId1']}}</div>
+        <div class="col-sm-6">is Different: {{branch['branch.isDifferent']}}</div>
+      </div>
+
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-2 border"></div>
+          <div class="col-sm-4 border"><span class="label">{{diffResult.network1}}</span></div>
+          <div class="col-sm-4 border"><span class="label">{{diffResult.network2}}</span></div>
+          <div class="col-sm-2 border"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label">t1.connected</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.isConnected1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.isConnected2']}}</div>
+          <div class="col-sm-2 border"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label label-default">t1.p</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.p1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.p2']}}</div>
+          <div class="col-sm-2 border">{{branch['branch.terminal1.p-delta']}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label label-default">t1.q</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.q1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.q2']}}</div>
+          <div class="col-sm-2 border">{{branch['branch.terminal1.q-delta']}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label label-default">t1.i</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.i1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal1.i2']}}</div>
+          <div class="col-sm-2 border">{{branch['branch.terminal1.i-delta']}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label">t2.connected</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.isConnected1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.isConnected2']}}</div>
+          <div class="col-sm-2 border"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label label-default">t2.p</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.p1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.p2']}}</div>
+          <div class="col-sm-2 border">{{branch['branch.terminal2.p-delta']}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label label-default">t2.q</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.q1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.q2']}}</div>
+          <div class="col-sm-2 border">{{branch['branch.terminal2.q-delta']}}</div>
+        </div>
+        <div class="row">
+          <div class="col-sm-2 border"><span class="label label-default">t2.i</span></div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.i1']}}</div>
+          <div class="col-sm-4 border">{{branch['branch.terminal2.i2']}}</div>
+          <div class="col-sm-2 border">{{branch['branch.terminal2.i-delta']}}</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
   </div>
 </div>
