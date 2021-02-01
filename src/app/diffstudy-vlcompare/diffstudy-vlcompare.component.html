@@ -63,7 +63,7 @@
       <div class="card" *ngFor="let vl of diffResult['diff.VoltageLevels']">
         <div class="card-header">
           <div class="col-sm-6">VOLTAGE LEVEL: {{vlId}}</div>
-          <div class="col-sm-6">is Different: {{vl['vl.isDifferent']}}</div>
+          <!--<div class="col-sm-6">is Different: {{vl['vl.isDifferent']}}</div>-->
         </div>
         <div class="card-body">
           <div class="row">
@@ -100,13 +100,13 @@
       </div>
 
     <div *ngIf="diffResult['diff.Branches'].length == 0">
-      <span>No Differences in branches {{vlId}}</span>
+      <span>No Differences in branches, in voltage level {{vlId}}</span>
     </div>
 
     <div class="card" *ngFor="let branch of diffResult['diff.Branches']">
       <div class="card-header">
         <div class="col-sm-6">BRANCH: {{branch['branch.branchId1']}}</div>
-        <div class="col-sm-6">is Different: {{branch['branch.isDifferent']}}</div>
+        <!--<div class="col-sm-6">is Different: {{branch['branch.isDifferent']}}</div>-->
       </div>
 
       <div class="card-body">
