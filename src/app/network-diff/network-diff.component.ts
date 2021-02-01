@@ -49,13 +49,13 @@ export class NetworkDiffComponent implements OnInit {
     this.diffResult = res;
   }
 
-  getUrl(networkId: string) {
-
-    var url = 'http://localhost:6007/v1/svg/network/' + networkId + '/vl/' + this.vlId + "/";
-    const diffs = this.diffResult["diff.VoltageLevels"][0]["vl.switchesStatus-delta"].join(',');
-
-    return url + diffs;
-    //return 'http://localhost:6007/v1/svg/network/' + networkId + '/vl/' + this.vlId;
+  getUrlSvgDiff(network1Id: string, network2Id: string) {
+    if ((network1Id === undefined || network1Id.length == 0) || (network2Id === undefined || network2Id.length == 0)
+      || (this.vlId === undefined || this.vlId.length == 0)) {
+      return "";
+    } else {
+      let url = 'http://localhost:6007/v1/networks/' + network1Id + '/svgdiff/' + network2Id + '/vl/' + this.vlId;
+      return url;
+    }
   }
-
 }

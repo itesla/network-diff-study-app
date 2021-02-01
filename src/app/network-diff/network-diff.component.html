@@ -76,13 +76,13 @@
         <p-tabPanel header="Network1">
           <span class="label">{{getNetworkName(network1)}}</span>
           <object id="obj1" type="image/svg+xml"  style="width:100%; height:800px;">
-            <param name="src" value="{{getUrl(network1)}}">
+            <param name="src" value="{{getUrlSvgDiff(network1, network2)}}">
           </object>
         </p-tabPanel>
         <p-tabPanel header="Network2">
           <span class="label">{{getNetworkName(network2)}}</span>
           <object id="obj2" type="image/svg+xml"  style="width:100%; height:800px;">
-            <param name="src" value="{{getUrl(network2)}}">
+            <param name="src" value="{{getUrlSvgDiff(network2, network1)}}">
           </object>
         </p-tabPanel>
       </p-tabView>

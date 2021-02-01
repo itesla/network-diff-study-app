@@ -116,8 +116,8 @@ export class DiffstudyVlcompareComponent implements OnInit {
         .subscribe(diffNetworksVlRes => {
           diffResult = diffNetworksVlRes;
           const vlevels = diffResult["diff.VoltageLevels"];
-          let switchestatus = [];
-          if (vlevels === undefined || vlevels.length == 0) {
+          const branches = diffResult["diff.Branches"];
+          if ((vlevels === undefined || vlevels.length == 0) && (branches === undefined || branches.length == 0)) {
             //same vl data
             showDiagram = false;
           } else {
@@ -168,28 +168,12 @@ export class DiffstudyVlcompareComponent implements OnInit {
     });
   }
 
-  getUrl(networkId: string) {
-    const vlevels = this.diffResult["diff.VoltageLevels"];
-    if (vlevels === undefined || vlevels.length == 0) {
-      return "";
-    } else {
-      const switchestatus = vlevels[0]["vl.switchesStatus-delta"];
-      if (switchestatus === undefined || switchestatus.length == 0) {
-        return "";
-      } else {
-        let url = 'http://localhost:6007/v1/svg/network/' + networkId + '/vl/' + this.vlId + "/";
-        const diffs = this.diffResult["diff.VoltageLevels"][0]["vl.switchesStatus-delta"].join(',');
-        return url + diffs;
-      }
-    }
-  }
-
-  getUrl2(network1Id: string, network2Id: string) {
+  getUrlSvgDiff(network1Id: string, network2Id: string) {
     if ((network1Id === undefined || network1Id.length == 0) || (network2Id === undefined || network2Id.length == 0)
         || (this.vlId === undefined || this.vlId.length == 0)) {
       return "";
     } else {
-      let url = 'http://localhost:6007/v1/svg2/network/' + network1Id + '/' + network2Id + '/vl/' + this.vlId;
+      let url = 'http://localhost:6007/v1/networks/' + network1Id + '/svgdiff/' + network2Id + '/vl/' + this.vlId;
       return url;
     }
   }
