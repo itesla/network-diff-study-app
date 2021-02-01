@@ -6,9 +6,7 @@
  */
 
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../api-client/api/api';
-import { NetworkIds, NetworkDiffResponse } from '../api-client/model/models';
-
+import { NetworkDiffServerService } from '../api-diff-client/api/api';
 
 @Component({
   selector: 'network-diff',
@@ -17,35 +15,35 @@ import { NetworkIds, NetworkDiffResponse } from '../api-client/model/models';
 })
 export class NetworkDiffComponent implements OnInit {
   networkKeys: string[];
-  neworkMap: NetworkIds;
+  networkMap: {[nId: string]: string};
   network1: string;
   network2: string;
   vlId: string;
-  diffResult: NetworkDiffResponse;
+  diffResult: {};
 
-  constructor(protected apiService: ApiService) { }
+  constructor(protected apiService: NetworkDiffServerService) { }
 
   ngOnInit(): void {
-    this.apiService.networksGet().subscribe((res) => this.onNetworkIdsLoaded(res));
+    this.apiService.getNetworkIdsUsingGET().subscribe((res) => this.onNetworkIdsLoaded(res));
 
   }
 
-  onNetworkIdsLoaded(nets: NetworkIds) {
-    this.neworkMap = nets;
-    this.networkKeys = Object.keys(nets);
+  onNetworkIdsLoaded(networksIdsMap: {[nId: string]: string}) {
+    this.networkMap = networksIdsMap;
+    this.networkKeys = Object.keys(networksIdsMap);
   }
 
   getNetworkName(id: string) {
-    return this.neworkMap?  this.neworkMap[id] : '';
+    return this.networkMap?  this.networkMap[id] : '';
   }
 
   networkDiff() {
 
-    this.apiService.networksNetwork1UuidDiffNetwork2UuidVlVlIdPost(this.network1, this.network2, this.vlId)
+    this.apiService.diffNetworksUsingGET(this.network1, this.network2, this.vlId)
         .subscribe(res => this.onNetworkDiffSuccess(res));
   }
 
-  onNetworkDiffSuccess(res: NetworkDiffResponse): void {
+  onNetworkDiffSuccess(res: String): void {
     this.diffResult = res;
   }
 

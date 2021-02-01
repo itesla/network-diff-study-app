@@ -6,8 +6,7 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {ApiService} from '../api-client/api/api';
-import {NetworkDiffResponse} from '../api-client/model/models';
+import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
 import {
@@ -31,7 +30,7 @@ export class DiffstudyVlcompareComponent implements OnInit {
   network2: string;
   vlId: string;
   subsDict = {};
-  diffResult: NetworkDiffResponse;
+  diffResult: {};
   studies: Diffstudy[];
   study: Object;
   vlevels: string[];
@@ -44,7 +43,7 @@ export class DiffstudyVlcompareComponent implements OnInit {
 
   map: Map;
 
-  constructor(protected apiService: ApiService, protected diffstudyService: DiffstudyService) {
+  constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
   ngOnInit(): void {
@@ -101,7 +100,7 @@ export class DiffstudyVlcompareComponent implements OnInit {
     let network1Uuid = "";
     let network2Uuid = "";
     let showDiagram = false;
-    let diffResult: NetworkDiffResponse;
+    let diffResult: {};
 
     //clean global status
     this.network1 = network1Uuid;
@@ -112,7 +111,7 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
       network1Uuid = diffStudyRes['network1Uuid'];
       network2Uuid = diffStudyRes['network2Uuid'];
-      this.apiService.networksNetwork1UuidDiffNetwork2UuidVlVlIdPost(network1Uuid, network2Uuid, this.vlId)
+      this.apiService.diffNetworksUsingGET(network1Uuid, network2Uuid, this.vlId)
         .subscribe(diffNetworksVlRes => {
           diffResult = diffNetworksVlRes;
           const vlevels = diffResult["diff.VoltageLevels"];

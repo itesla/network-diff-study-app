@@ -21,7 +21,7 @@ import { CreateDiffstudyComponent } from './create-diffstudy/create-diffstudy.co
 
 import { Observable } from 'rxjs/Observable';
 
-import { ApiModule } from './api-client/api.module';
+import { ApiModule } from './api-diff-client/api.module';
 import { DiffstudyVlcompareComponent } from './diffstudy-vlcompare/diffstudy-vlcompare.component';
 import { NetworkDiffComponent} from "./network-diff/network-diff.component";
 import {LeafletModule} from "@asymmetrik/ngx-leaflet";
