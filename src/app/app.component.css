@@ -50,7 +50,7 @@
     opacity: 0.8;
   }
 
-  
+
 
   .content {
     display: flex;
@@ -291,4 +291,9 @@
 
 a.btn {
   margin: 0 5px;
+}
+
+nav {
+  width: 1000px;
+  alignment: right;
 }
