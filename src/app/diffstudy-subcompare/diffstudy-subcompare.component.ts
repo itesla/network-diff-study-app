@@ -106,7 +106,7 @@ export class DiffstudySubcompareComponent implements OnInit {
       network1Uuid = diffStudyRes['network1Uuid'];
       network2Uuid = diffStudyRes['network2Uuid'];
 
-      this.apiService.diffNetworksUsingGET(network1Uuid, network2Uuid, Object.values(this.subsDict)[0][0])
+      this.apiService.diffSubstationUsingGET(network1Uuid, network2Uuid, this.subId)
         .subscribe(diffNetworksVlRes => {
           diffResult = diffNetworksVlRes;
           const vlevels = diffResult["diff.VoltageLevels"];
@@ -145,7 +145,7 @@ export class DiffstudySubcompareComponent implements OnInit {
         let substationMarker = marker([resGeo[i].coordinate.lat, resGeo[i].coordinate.lon], {
           icon: icon({
             iconSize: [30, 30],
-            iconUrl: (this.subsDict[resGeo[i].id].includes(this.subId)) ? 'assets/substation_blue.png' : 'assets/substation.png'
+            iconUrl: (resGeo[i].id.includes(this.subId)) ? 'assets/substation_blue.png' : 'assets/substation.png'
           })
         }).on('click', () => {
         }).bindPopup(vlevelsHtml);

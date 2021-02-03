@@ -107,6 +107,58 @@ export class NetworkDiffServerService {
     }
 
     /**
+     * compare two networks substations
+     * 
+     * @param network1Uuid Network1 UUID
+     * @param network2Uuid Network2 UUID
+     * @param subId Substation ID
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public diffSubstationUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public diffSubstationUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public diffSubstationUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public diffSubstationUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (network1Uuid === null || network1Uuid === undefined) {
+            throw new Error('Required parameter network1Uuid was null or undefined when calling diffSubstationUsingGET.');
+        }
+
+        if (network2Uuid === null || network2Uuid === undefined) {
+            throw new Error('Required parameter network2Uuid was null or undefined when calling diffSubstationUsingGET.');
+        }
+
+        if (subId === null || subId === undefined) {
+            throw new Error('Required parameter subId was null or undefined when calling diffSubstationUsingGET.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*',
+            'application/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<string>('get',`${this.basePath}/v1/networks/${encodeURIComponent(String(network1Uuid))}/diff/${encodeURIComponent(String(network2Uuid))}/sub/${encodeURIComponent(String(subId))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * get network ids
      * 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -134,6 +186,58 @@ export class NetworkDiffServerService {
         ];
 
         return this.httpClient.request<{ [key: string]: string; }>('get',`${this.basePath}/v1/networks`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * get substation svg diff diagram
+     * 
+     * @param network1Uuid Network1 UUID
+     * @param network2Uuid Network2 UUID
+     * @param subId Substation ID
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getSubSvgUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe?: 'body', reportProgress?: boolean): Observable<string>;
+    public getSubSvgUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<string>>;
+    public getSubSvgUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<string>>;
+    public getSubSvgUsingGET(network1Uuid: string, network2Uuid: string, subId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (network1Uuid === null || network1Uuid === undefined) {
+            throw new Error('Required parameter network1Uuid was null or undefined when calling getSubSvgUsingGET.');
+        }
+
+        if (network2Uuid === null || network2Uuid === undefined) {
+            throw new Error('Required parameter network2Uuid was null or undefined when calling getSubSvgUsingGET.');
+        }
+
+        if (subId === null || subId === undefined) {
+            throw new Error('Required parameter subId was null or undefined when calling getSubSvgUsingGET.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            '*/*',
+            'image/svg+xml'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<string>('get',`${this.basePath}/v1/networks/${encodeURIComponent(String(network1Uuid))}/svgdiff/${encodeURIComponent(String(network2Uuid))}/sub/${encodeURIComponent(String(subId))}`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

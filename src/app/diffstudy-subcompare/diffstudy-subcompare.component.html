@@ -3,7 +3,7 @@
   <div class="sidebar">
     <div class="form-group">
       <label for="study">Study</label>
-      <select id="study" class="form-control" [(ngModel)]="study" (ngModelChange)="onChangeDiffStudy($event)">
+      <select (ngModelChange)="onChangeDiffStudy($event)" [(ngModel)]="study" class="form-control" id="study">
         <option *ngFor="let stud of studies;" [ngValue]="stud">{{stud.studyName}}</option>
       </select>
     </div>
@@ -15,15 +15,16 @@
     -->
     <div class="form-group">
       <label for="subId">Substation</label>
-      <select id="subId" class="form-control" [(ngModel)]="subId">
+      <select [(ngModel)]="subId" class="form-control" id="subId">
         <option *ngFor="let sub of subs;" [ngValue]="sub">{{sub}}</option>
       </select>
     </div>
 
-    <button type="button" class="btn btn-info" (click)="networkDiff()">Compare</button>
+    <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
   </div>
 
   <div>
+
     <div *ngIf="showDiagram == true">
 
       <hr/>
@@ -44,132 +45,146 @@
           </p-tabPanel>
         </p-tabView>
       </div>
-  </div>
+    </div>
 
-  <div *ngIf="diffResult">
+    <div *ngIf="diffResult">
 
       <hr>
 
-      <div class="map"
-           leaflet
+      <div (leafletMapReady)="onMapReady($event)"
            [leafletOptions]="mapOptions"
-           (leafletMapReady)="onMapReady($event)">
+           class="map"
+           leaflet>
       </div>
 
       <hr>
 
-      <div *ngIf="diffResult['diff.VoltageLevels'].length == 0">
-        <span>No Differences in voltagelevers for substation {{subId}}</span>
+      <div *ngIf="diffResult['diff.VoltageLevels'].length == 0 ; else showDifferences">
+        <p>
+          <span>No Differences in voltage levels for substation {{subId}}</span>
+        </p>
       </div>
 
- <!--     <div class="card" *ngFor="let vl of diffResult['diff.VoltageLevels']">
-        <div class="card-header">
-          <div class="col-sm-6">VOLTAGE LEVEL: {{vl}}</div>
+      <ng-template #showDifferences>
+        <p>
+          <span>Differences in voltage levels for substation {{subId}}</span>
+        </p>
+        <div *ngFor="let vl of diffResult['diff.VoltageLevels']" class="card">
+          <div class="card-header">
+            <div class="col-sm-6">VOLTAGE LEVEL: {{vl['vl.vlId1']}}</div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-2 border"></div>
+              <div class="col-sm-4 border"><span class="label">{{diffResult['network1']}}</span></div>
+              <div class="col-sm-4 border"><span class="label">{{diffResult['network2']}}</span></div>
+              <div class="col-sm-2 border"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label">No Bus</span></div>
+              <div class="col-sm-4 border">{{vl['vl.noBus1']}}</div>
+              <div class="col-sm-4 border">{{vl['vl.noBus2']}}</div>
+              <div class="col-sm-2 border"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">minV</span></div>
+              <div class="col-sm-4 border">{{vl['vl.minV1']}}</div>
+              <div class="col-sm-4 border">{{vl['vl.minV2']}}</div>
+              <div class="col-sm-2 border">{{vl['vl.minV-delta']}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">maxV</span></div>
+              <div class="col-sm-4 border">{{vl['vl.maxV1']}}</div>
+              <div class="col-sm-4 border">{{vl['vl.maxV2']}}</div>
+              <div class="col-sm-2 border">{{vl['vl.maxV-delta']}}</div>
+            </div>
+            <div *ngFor="let sw of vl['vl.switchesStatus-delta']" class="row">
+              <div class="col-sm-2 border"><span class="label label-default">{{sw}}</span></div>
+              <div class="col-sm-4 border">{{vl['vl.switchesStatusV1'][sw]}}</div>
+              <div class="col-sm-4 border">{{vl['vl.switchesStatusV2'][sw]}}</div>
+              <div class="col-sm-2 border"></div>
+            </div>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-sm-2 border"></div>
-            <div class="col-sm-4 border"><span class="label">{{diffResult.network1}}</span></div>
-            <div class="col-sm-4 border"><span class="label">{{diffResult.network2}}</span></div>
-            <div class="col-sm-2 border"></div>
-          </div>
-          <div class="row">
-            <div class="col-sm-2 border"><span class="label">No Bus</span></div>
-            <div class="col-sm-4 border">{{vl['vl.noBus1']}}</div>
-            <div class="col-sm-4 border">{{vl['vl.noBus2']}}</div>
-            <div class="col-sm-2 border"></div>
-          </div>
-          <div class="row">
-            <div class="col-sm-2 border"><span class="label label-default">minV</span></div>
-            <div class="col-sm-4 border">{{vl['vl.minV1']}}</div>
-            <div class="col-sm-4 border">{{vl['vl.minV2']}}</div>
-            <div class="col-sm-2 border">{{vl['vl.minV-delta']}}</div>
-          </div>
-          <div class="row">
-            <div class="col-sm-2 border"><span class="label label-default">maxV</span></div>
-            <div class="col-sm-4 border">{{vl['vl.maxV1']}}</div>
-            <div class="col-sm-4 border">{{vl['vl.maxV2']}}</div>
-            <div class="col-sm-2 border">{{vl['vl.maxV-delta']}}</div>
-          </div>
-          <div class="row" *ngFor="let sw of vl['vl.switchesStatus-delta']">
-            <div class="col-sm-2 border"><span class="label label-default">{{sw}}</span></div>
-            <div class="col-sm-4 border">{{vl['vl.switchesStatusV1'][sw]}}</div>
-            <div class="col-sm-4 border">{{vl['vl.switchesStatusV2'][sw]}}</div>
-            <div class="col-sm-2 border"></div>
-          </div>
-        </div>
-      </div>-->
+      </ng-template>
 
-    <div *ngIf="diffResult['diff.Branches'].length == 0">
-      <span>No Differences in branches, for substation {{subId}}</span>
+      <hr>
+
+      <div *ngIf="diffResult['diff.Branches'].length == 0 ; else showBranchesDifferences">
+        <p>
+          <span>No Differences in branches, for substation {{subId}}</span>
+        </p>
+      </div>
+
+      <ng-template #showBranchesDifferences>
+        <p>
+          <span>Differences in branches for substation {{subId}}</span>
+        </p>
+
+        <div *ngFor="let branch of diffResult['diff.Branches']" class="card">
+          <div class="card-header">
+            <div class="col-sm-6">BRANCH: {{branch['branch.branchId1']}}</div>
+          </div>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-2 border"></div>
+              <div class="col-sm-4 border"><span class="label">{{diffResult['network1']}}</span></div>
+              <div class="col-sm-4 border"><span class="label">{{diffResult['network1']}}</span></div>
+              <div class="col-sm-2 border"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label">t1.connected</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.isConnected1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.isConnected2']}}</div>
+              <div class="col-sm-2 border"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">t1.p</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.p1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.p2']}}</div>
+              <div class="col-sm-2 border">{{branch['branch.terminal1.p-delta']}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">t1.q</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.q1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.q2']}}</div>
+              <div class="col-sm-2 border">{{branch['branch.terminal1.q-delta']}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">t1.i</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.i1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal1.i2']}}</div>
+              <div class="col-sm-2 border">{{branch['branch.terminal1.i-delta']}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label">t2.connected</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.isConnected1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.isConnected2']}}</div>
+              <div class="col-sm-2 border"></div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">t2.p</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.p1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.p2']}}</div>
+              <div class="col-sm-2 border">{{branch['branch.terminal2.p-delta']}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">t2.q</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.q1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.q2']}}</div>
+              <div class="col-sm-2 border">{{branch['branch.terminal2.q-delta']}}</div>
+            </div>
+            <div class="row">
+              <div class="col-sm-2 border"><span class="label label-default">t2.i</span></div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.i1']}}</div>
+              <div class="col-sm-4 border">{{branch['branch.terminal2.i2']}}</div>
+              <div class="col-sm-2 border">{{branch['branch.terminal2.i-delta']}}</div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
     </div>
-
-<!--
-    <div class="card" *ngFor="let branch of diffResult['diff.Branches']">
-      <div class="card-header">
-        <div class="col-sm-6">BRANCH: {{branch['branch.branchId1']}}</div>
-      </div>
-
-      <div class="card-body">
-        <div class="row">
-          <div class="col-sm-2 border"></div>
-          <div class="col-sm-4 border"><span class="label">{{diffResult.network1}}</span></div>
-          <div class="col-sm-4 border"><span class="label">{{diffResult.network2}}</span></div>
-          <div class="col-sm-2 border"></div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label">t1.connected</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.isConnected1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.isConnected2']}}</div>
-          <div class="col-sm-2 border"></div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label label-default">t1.p</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.p1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.p2']}}</div>
-          <div class="col-sm-2 border">{{branch['branch.terminal1.p-delta']}}</div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label label-default">t1.q</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.q1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.q2']}}</div>
-          <div class="col-sm-2 border">{{branch['branch.terminal1.q-delta']}}</div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label label-default">t1.i</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.i1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal1.i2']}}</div>
-          <div class="col-sm-2 border">{{branch['branch.terminal1.i-delta']}}</div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label">t2.connected</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.isConnected1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.isConnected2']}}</div>
-          <div class="col-sm-2 border"></div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label label-default">t2.p</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.p1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.p2']}}</div>
-          <div class="col-sm-2 border">{{branch['branch.terminal2.p-delta']}}</div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label label-default">t2.q</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.q1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.q2']}}</div>
-          <div class="col-sm-2 border">{{branch['branch.terminal2.q-delta']}}</div>
-        </div>
-        <div class="row">
-          <div class="col-sm-2 border"><span class="label label-default">t2.i</span></div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.i1']}}</div>
-          <div class="col-sm-4 border">{{branch['branch.terminal2.i2']}}</div>
-          <div class="col-sm-2 border">{{branch['branch.terminal2.i-delta']}}</div>
-        </div>
-      </div>
-
-    </div>
--->
-
-  </div>
   </div>
 </div>
