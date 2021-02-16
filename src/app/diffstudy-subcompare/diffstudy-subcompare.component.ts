@@ -39,7 +39,6 @@ export class DiffstudySubcompareComponent implements OnInit {
   diffResult: {};
   studies: Diffstudy[];
   study: Object;
-  showDiagram: boolean;
 
   mapOptions: any;
   streetmap: any;
@@ -68,11 +67,9 @@ export class DiffstudySubcompareComponent implements OnInit {
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
-    this.showDiagram = false;
   }
 
   onChangeDiffStudy(study) {
-    this.showDiagram = false;
     this.subIds = "";
     this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe(vlevelsRes => {
       this.subsDict = {};
@@ -113,7 +110,6 @@ export class DiffstudySubcompareComponent implements OnInit {
     //clean global status
     this.network1 = network1Uuid;
     this.network2 = network2Uuid;
-    this.showDiagram = showDiagram;
     this.diffResult = diffResult;
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
@@ -127,21 +123,12 @@ export class DiffstudySubcompareComponent implements OnInit {
           diffResult = diffNetworksVlRes;
           const vlevels = diffResult["diff.VoltageLevels"];
           const branches = diffResult["diff.Branches"];
-          if ((vlevels === undefined || vlevels.length == 0) && (branches === undefined || branches.length == 0)) {
-            //same vl data
-            showDiagram = false;
-          } else {
-            //vl data differs
-            showDiagram = true;
-          }
 
           //set global status
           this.network1 = network1Uuid;
           this.network2 = network2Uuid;
-          this.showDiagram = showDiagram;
           this.diffResult = diffResult;
 
-          //console.log("!!!! changing input data");
           this.network1s = network1Uuid;
           this.network2s = network2Uuid;
           this.subIds = this.subId;
