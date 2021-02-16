@@ -73,10 +73,9 @@ export class DiffstudySubcompareComponent implements OnInit {
 
   onChangeDiffStudy(study) {
     this.subIds = "";
+    this.subs = [];
+    this.subsDict = {};
     this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe(vlevelsRes => {
-      this.subsDict = {};
-      this.subs = [];
-
       if (this.study['zone'] === undefined || this.study['zone'] == 0) {
         //what happens when there are no zones?
       } else {

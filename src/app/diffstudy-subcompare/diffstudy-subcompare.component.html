@@ -7,14 +7,20 @@
         <option *ngFor="let stud of studies;" [ngValue]="stud">{{stud.studyName}}</option>
       </select>
     </div>
-    <div class="form-group">
-      <label for="subId">Substation</label>
-      <select [(ngModel)]="subId" class="form-control" id="subId">
-        <option *ngFor="let sub of subs;" [ngValue]="sub">{{sub}}</option>
-      </select>
-    </div>
+    <div *ngIf="study != undefined">
+      <div class="form-group">
+        <label for="subId">Substation</label>
+        <div *ngIf="subs.length == 0; else subSelContent">....</div>
+        <ng-template #subSelContent>
+          <select [(ngModel)]="subId" class="form-control" id="subId">
+            <option *ngFor="let sub of subs;" [ngValue]="sub">{{sub}}</option>
+          </select>
+          <p></p>
+          <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
+        </ng-template>
+      </div>
 
-    <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
+    </div>
   </div>
 
   <div #mytab>
@@ -23,7 +29,7 @@
 
   <span class="label">{{network1Names}}</span>
   <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
-
+  <p></p>
   <span class="label">{{network2Names}}</span>
   <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
   <!--
