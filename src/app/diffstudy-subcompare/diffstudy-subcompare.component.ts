@@ -32,6 +32,8 @@ export class DiffstudySubcompareComponent implements OnInit {
   network1s: string;
   network2s: string;
   subIds: string;
+  network1Names: string;
+  network2Names: string;
 
   subId: string;
   subsDict = {};
@@ -132,6 +134,8 @@ export class DiffstudySubcompareComponent implements OnInit {
           this.network1s = network1Uuid;
           this.network2s = network2Uuid;
           this.subIds = this.subId;
+          this.network1Names = this.getStudyAttributeOrEmptyString("network1Id");
+          this.network2Names = this.getStudyAttributeOrEmptyString("network2Id");
 
           //shows substations markers on the map
           this.placeSubstationsMarkersMap(this.study['studyName']);

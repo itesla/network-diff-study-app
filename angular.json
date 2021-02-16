@@ -31,7 +31,10 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "svg-pan-zoom"
+            ]
           },
           "configurations": {
             "production": {

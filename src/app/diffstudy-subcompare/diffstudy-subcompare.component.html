@@ -18,20 +18,27 @@
   </div>
 
   <div #mytab>
-
     <hr/>
-    <div>
-      <p-tabView>
-        <p-tabPanel header="Network1">
-          <span class="label">{{getStudyAttributeOrEmptyString("network1Id")}}</span>
-          <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds"></app-sdl-diff>
-        </p-tabPanel>
-        <p-tabPanel header="Network2">
-          <span class="label">{{getStudyAttributeOrEmptyString("network2Id")}}</span>
-          <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds"></app-sdl-diff>
-        </p-tabPanel>
-      </p-tabView>
-    </div>
+  <div>
+
+  <span class="label">{{network1Names}}</span>
+  <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
+
+  <span class="label">{{network2Names}}</span>
+  <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
+  <!--
+        <p-tabView>
+          <p-tabPanel header="Network1">
+            <span class="label">{{getStudyAttributeOrEmptyString("network1Id")}}</span>
+            <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
+          </p-tabPanel>
+          <p-tabPanel header="Network2">
+            <span class="label">{{getStudyAttributeOrEmptyString("network2Id")}}</span>
+            <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
+          </p-tabPanel>
+        </p-tabView>
+  -->
+  </div>
 
     <div *ngIf="diffResult">
       <hr>

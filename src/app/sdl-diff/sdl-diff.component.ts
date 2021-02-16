@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild, ViewChildren} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import * as SvgPanZoom from 'svg-pan-zoom';
+
 
 @Component({
   selector: 'app-sdl-diff',
@@ -9,9 +11,12 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 })
 export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
 
+  @Input() sdlId: string;
   @Input() network1: string;
   @Input() network2: string;
   @Input() subsId: string;
+
+  svgPanZoom: any;
 
   constructor(protected apiService: NetworkDiffServerService, protected httpClient: HttpClient) {
   }
@@ -44,8 +49,19 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
         responseType: 'text' as 'text'
       })
         .subscribe((svgData: any) => {
-          let inlineSvg = svgData.replace("<svg ", "<svg viewbox='0 0 1600 800'");
+          let inlineSvg = svgData.replace("<svg ", "<svg id='"+this.sdlId+"' viewbox='0 0 1600 800' style='display: inline; width: inherit; min-width: inherit; max-width: inherit; height: inherit; min-height: inherit; max-height: inherit; ' ");
           this.dataContainer.nativeElement.innerHTML = inlineSvg;
+
+          if (this.sdlId != undefined) {
+            let svgPanZoom: SvgPanZoom.Instance = SvgPanZoom('#'+this.sdlId, {
+              zoomEnabled: true,
+              controlIconsEnabled: true,
+              fit: true,
+              center: true
+            });
+            svgPanZoom.updateBBox();
+            this.svgPanZoom=svgPanZoom;
+          }
         });
     }
 
@@ -63,7 +79,11 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.inputDataOk() == false) {
-      this.dataContainer.nativeElement.innerHTML = "Please select a study and a substation";
+      //let initContent="<svg id='"+this.sdlId+"' viewbox='0 0 1600 800'></svg>";
+      //let initContent="<svg id='"+this.sdlId+"' viewbox='0 0 1600 800' style='stroke: #000000;  font-size: 32px;'><text x='10' y='30'>please select a study and a substation</text></svg>";
+      let initContent="please select a study and a substation";
+      this.dataContainer.nativeElement.innerHTML = initContent;
     }
+
   }
 }
