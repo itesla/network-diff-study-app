@@ -7,12 +7,6 @@
         <option *ngFor="let stud of studies;" [ngValue]="stud">{{stud.studyName}}</option>
       </select>
     </div>
-    <!--
-    <div class="form-group">
-      <label>Voltage Level</label>
-      <input class="form-control" type="text" [(ngModel)]="vlId">
-    </div>
-    -->
     <div class="form-group">
       <label for="subId">Substation</label>
       <select [(ngModel)]="subId" class="form-control" id="subId">
@@ -23,32 +17,23 @@
     <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
   </div>
 
-  <div>
+  <div #mytab>
 
-    <div *ngIf="showDiagram == true">
-
-      <hr/>
-
-      <div style="width:400%;">
-        <p-tabView>
-          <p-tabPanel header="Network1">
-            <span class="label">{{study["network1Id"]}}</span>
-            <object id="obj1" style="width:100%; height:800px;" type="image/svg+xml">
-              <param name="src" value="{{getUrlSvgDiff(network1, network2)}}">
-            </object>
-          </p-tabPanel>
-          <p-tabPanel header="Network2">
-            <span class="label">{{study["network2Id"]}}</span>
-            <object id="obj2" style="width:100%; height:800px;" type="image/svg+xml">
-              <param name="src" value="{{getUrlSvgDiff(network2, network1)}}">
-            </object>
-          </p-tabPanel>
-        </p-tabView>
-      </div>
+    <hr/>
+    <div>
+      <p-tabView>
+        <p-tabPanel header="Network1">
+          <span class="label">{{getStudyAttributeOrEmptyString("network1Id")}}</span>
+          <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds"></app-sdl-diff>
+        </p-tabPanel>
+        <p-tabPanel header="Network2">
+          <span class="label">{{getStudyAttributeOrEmptyString("network2Id")}}</span>
+          <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds"></app-sdl-diff>
+        </p-tabPanel>
+      </p-tabView>
     </div>
 
     <div *ngIf="diffResult">
-
       <hr>
 
       <div (leafletMapReady)="onMapReady($event)"

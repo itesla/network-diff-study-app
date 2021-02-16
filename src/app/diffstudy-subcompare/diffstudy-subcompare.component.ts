@@ -28,6 +28,11 @@ import {
 export class DiffstudySubcompareComponent implements OnInit {
   network1: string;
   network2: string;
+
+  network1s: string;
+  network2s: string;
+  subIds: string;
+
   subId: string;
   subsDict = {};
   subs = [];
@@ -68,6 +73,7 @@ export class DiffstudySubcompareComponent implements OnInit {
 
   onChangeDiffStudy(study) {
     this.showDiagram = false;
+    this.subIds = "";
     this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe(vlevelsRes => {
       this.subsDict = {};
       this.subs = [];
@@ -90,6 +96,14 @@ export class DiffstudySubcompareComponent implements OnInit {
     });
   }
 
+  getStudyAttributeOrEmptyString(attributeName:string):string {
+    if (this.study == undefined) {
+      return "";
+    } else {
+      return this.study[attributeName];
+    }
+  }
+
   networkDiff() {
     let network1Uuid = "";
     let network2Uuid = "";
@@ -103,11 +117,13 @@ export class DiffstudySubcompareComponent implements OnInit {
     this.diffResult = diffResult;
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
+      //console.log("$$ getDiffStudy");
       network1Uuid = diffStudyRes['network1Uuid'];
       network2Uuid = diffStudyRes['network2Uuid'];
 
       this.apiService.diffSubstationUsingGET(network1Uuid, network2Uuid, this.subId)
         .subscribe(diffNetworksVlRes => {
+          //console.log("$$ diffSubstationUsingGET");
           diffResult = diffNetworksVlRes;
           const vlevels = diffResult["diff.VoltageLevels"];
           const branches = diffResult["diff.Branches"];
@@ -124,6 +140,11 @@ export class DiffstudySubcompareComponent implements OnInit {
           this.network2 = network2Uuid;
           this.showDiagram = showDiagram;
           this.diffResult = diffResult;
+
+          //console.log("!!!! changing input data");
+          this.network1s = network1Uuid;
+          this.network2s = network2Uuid;
+          this.subIds = this.subId;
 
           //shows substations markers on the map
           this.placeSubstationsMarkersMap(this.study['studyName']);
@@ -160,16 +181,6 @@ export class DiffstudySubcompareComponent implements OnInit {
       }
 
     });
-  }
-
-  getUrlSvgDiff(network1Id: string, network2Id: string) {
-    if ((network1Id === undefined || network1Id.length == 0) || (network2Id === undefined || network2Id.length == 0)
-        || (this.subId === undefined || this.subId.length == 0)) {
-      return "";
-    } else {
-      let url = 'http://localhost:6007/v1/networks/' + network1Id + '/svgdiff/' + network2Id + '/sub/' + this.subId;
-      return url;
-    }
   }
 
   onMapReady(map: Map) {
