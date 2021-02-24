@@ -26,12 +26,14 @@
   <div #mytab>
     <hr/>
   <div>
-
-  <span class="label">{{network1Names}}</span>
-  <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
-  <p></p>
-  <span class="label">{{network2Names}}</span>
-  <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
+    <!--<div *ngIf="study != undefined">-->
+    <div *ngIf="showDiagram == true">
+    <span class="label">{{network1Names}}</span>
+    <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
+    <p></p>
+    <span class="label">{{network2Names}}</span>
+    <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
+    </div>
   <!--
         <p-tabView>
           <p-tabPanel header="Network1">

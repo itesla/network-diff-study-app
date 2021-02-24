@@ -49,6 +49,8 @@ export class DiffstudySubcompareComponent implements OnInit {
 
   map: Map;
 
+  showDiagram: boolean = false;
+
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
@@ -69,12 +71,15 @@ export class DiffstudySubcompareComponent implements OnInit {
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
+
+    this.showDiagram = false;
   }
 
   onChangeDiffStudy(study) {
     this.subIds = "";
     this.subs = [];
     this.subsDict = {};
+
     this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe(vlevelsRes => {
       if (this.study['zone'] === undefined || this.study['zone'] == 0) {
         //what happens when there are no zones?
@@ -105,13 +110,13 @@ export class DiffstudySubcompareComponent implements OnInit {
   networkDiff() {
     let network1Uuid = "";
     let network2Uuid = "";
-    let showDiagram = false;
     let diffResult: {};
 
     //clean global status
     this.network1 = network1Uuid;
     this.network2 = network2Uuid;
     this.diffResult = diffResult;
+    this.showDiagram = true;
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
       //console.log("$$ getDiffStudy");
