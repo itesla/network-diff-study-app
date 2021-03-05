@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SdlDiffComponent } from './sdl-diff.component';
+import { SldDiffComponent } from './sld-diff.component';
 
-describe('SdlDiffComponent', () => {
-  let component: SdlDiffComponent;
-  let fixture: ComponentFixture<SdlDiffComponent>;
+describe('SldDiffComponent', () => {
+  let component: SldDiffComponent;
+  let fixture: ComponentFixture<SldDiffComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SdlDiffComponent ]
+      declarations: [ SldDiffComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SdlDiffComponent);
+    fixture = TestBed.createComponent(SldDiffComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

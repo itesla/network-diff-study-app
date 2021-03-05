@@ -32,20 +32,20 @@
 
       <div *ngIf="showDiagram == true">
         <span class="label">{{network1Names}}</span>
-        <app-sdl-diff [network1]="network1s" [network2]="network2s" [pId]="vlIds" pType="vl" sdlId="svgVl1"></app-sdl-diff>
+        <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="vlIds" pType="vl" sldId="svgVl1"></app-sld-diff>
         <p></p>
         <span class="label">{{network2Names}}</span>
-        <app-sdl-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" pType="vl" sdlId="svgVl2"></app-sdl-diff>
+        <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" pType="vl" sldId="svgVl2"></app-sld-diff>
       </div>
       <!--
             <p-tabView>
               <p-tabPanel header="Network1">
                 <span class="label">{{getStudyAttributeOrEmptyString("network1Id")}}</span>
-                <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
+                <app-sld-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sldId="svg1"></app-sld-diff>
               </p-tabPanel>
               <p-tabPanel header="Network2">
                 <span class="label">{{getStudyAttributeOrEmptyString("network2Id")}}</span>
-                <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
+                <app-sld-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sldId="svg2"></app-sld-diff>
               </p-tabPanel>
             </p-tabView>
       -->

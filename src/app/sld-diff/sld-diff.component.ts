@@ -5,13 +5,13 @@ import * as SvgPanZoom from 'svg-pan-zoom';
 
 
 @Component({
-  selector: 'app-sdl-diff',
-  templateUrl: './sdl-diff.component.html',
-  styleUrls: ['./sdl-diff.component.css']
+  selector: 'app-sld-diff',
+  templateUrl: './sld-diff.component.html',
+  styleUrls: ['./sld-diff.component.css']
 })
-export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
+export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
 
-  @Input() sdlId: string;
+  @Input() sldId: string;
   @Input() network1: string;
   @Input() network2: string;
   @Input() pId: string;
@@ -56,11 +56,11 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
           if (this.pType === 'vl') {
             viewBox = "0 0 1000 650";
           }
-          let svgHead = `<svg id='${this.sdlId}' viewbox='${viewBox}' style='${svgStyle}'`;
+          let svgHead = `<svg id='${this.sldId}' viewbox='${viewBox}' style='${svgStyle}'`;
           this.dataContainer.nativeElement.innerHTML = svgData.replace("<svg ", svgHead);
 
-          if (this.sdlId != undefined) {
-            let svgPanZoom: SvgPanZoom.Instance = SvgPanZoom('#'+this.sdlId, {
+          if (this.sldId != undefined) {
+            let svgPanZoom: SvgPanZoom.Instance = SvgPanZoom('#'+this.sldId, {
               zoomEnabled: true,
               controlIconsEnabled: true,
               fit: true,

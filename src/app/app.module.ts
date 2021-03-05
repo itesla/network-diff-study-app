@@ -27,7 +27,7 @@ import { NetworkDiffComponent} from "./network-diff/network-diff.component";
 import {LeafletModule} from "@asymmetrik/ngx-leaflet";
 import {EditDiffStudyComponent} from "./diffstudy-edit/edit-diffstudy.component";
 import { DiffstudySubcompareComponent } from './diffstudy-subcompare/diffstudy-subcompare.component';
-import { SdlDiffComponent } from './sdl-diff/sdl-diff.component';
+import { SldDiffComponent } from './sld-diff/sld-diff.component';
 
 
 @NgModule({
@@ -41,7 +41,7 @@ import { SdlDiffComponent } from './sdl-diff/sdl-diff.component';
     NetworkDiffComponent,
     EditDiffStudyComponent,
     DiffstudySubcompareComponent,
-    SdlDiffComponent
+    SldDiffComponent
   ],
     imports: [
         BrowserModule,
