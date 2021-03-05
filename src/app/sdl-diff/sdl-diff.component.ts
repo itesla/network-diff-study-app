@@ -14,7 +14,8 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() sdlId: string;
   @Input() network1: string;
   @Input() network2: string;
-  @Input() subsId: string;
+  @Input() pId: string;
+  @Input() pType: string;
 
   svgPanZoom: any;
 
@@ -23,7 +24,8 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
 
   inputDataOk(): boolean {
     if ((this.network1 === undefined || this.network1.length == 0) || (this.network2 === undefined || this.network2.length == 0)
-      || (this.subsId === undefined || this.subsId.length == 0)) {
+      || (this.pId === undefined || this.pId.length == 0)
+      || (this.pType === undefined || this.pType.length == 0)) {
       return false;
     } else {
       return true;
@@ -39,7 +41,8 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
     if (this.inputDataOk() == true) {
       this.dataContainer.nativeElement.innerHTML = "Loading ..."
 
-      let serviceUrl = `http://localhost:6007/v1/networks/${encodeURIComponent(String(this.network1))}/svgdiff/${encodeURIComponent(String(this.network2))}/sub/${encodeURIComponent(String(this.subsId))}`;
+      let compServiceType = (this.pType === 'vl') ? 'vl' : 'sub';
+      let serviceUrl = `http://localhost:6007/v1/networks/${encodeURIComponent(String(this.network1))}/svgdiff/${encodeURIComponent(String(this.network2))}/${compServiceType}/${encodeURIComponent(String(this.pId))}`;
       //console.log("serviceUrl: " + serviceUrl);
 
       this.httpClient.get(serviceUrl, {
@@ -47,10 +50,14 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
           'Content-Type': 'image/svg+xml'
         }),
         responseType: 'text' as 'text'
-      })
-        .subscribe((svgData: any) => {
-          let inlineSvg = svgData.replace("<svg ", "<svg id='"+this.sdlId+"' viewbox='0 0 1600 800' style='display: inline; width: inherit; min-width: inherit; max-width: inherit; height: inherit; min-height: inherit; max-height: inherit; ' ");
-          this.dataContainer.nativeElement.innerHTML = inlineSvg;
+      }).subscribe((svgData: any) => {
+          let svgStyle = "display: inline; width: inherit; min-width: inherit; max-width: inherit; height: inherit; min-height: inherit; max-height: inherit; ";
+          let viewBox = "0 0 1600 750";
+          if (this.pType === 'vl') {
+            viewBox = "0 0 1000 650";
+          }
+          let svgHead = `<svg id='${this.sdlId}' viewbox='${viewBox}' style='${svgStyle}'`;
+          this.dataContainer.nativeElement.innerHTML = svgData.replace("<svg ", svgHead);
 
           if (this.sdlId != undefined) {
             let svgPanZoom: SvgPanZoom.Instance = SvgPanZoom('#'+this.sdlId, {
@@ -64,26 +71,12 @@ export class SdlDiffComponent implements OnInit, OnChanges, AfterViewInit {
           }
         });
     }
-
-  }
-
-  getUrlSvgDiff() {
-    if ((this.network1 === undefined || this.network1.length == 0) || (this.network2 === undefined || this.network2.length == 0)
-      || (this.subsId === undefined || this.subsId.length == 0)) {
-      return "";
-    } else {
-      let url = 'http://localhost:6007/v1/networks/' + this.network1 + '/svgdiff/' + this.network2 + '/sub/' + this.subsId;
-      return url;
-    }
   }
 
   ngAfterViewInit(): void {
     if (this.inputDataOk() == false) {
-      //let initContent="<svg id='"+this.sdlId+"' viewbox='0 0 1600 800'></svg>";
-      //let initContent="<svg id='"+this.sdlId+"' viewbox='0 0 1600 800' style='stroke: #000000;  font-size: 32px;'><text x='10' y='30'>please select a study and a substation</text></svg>";
-      let initContent="please select a study and a substation";
+      let initContent="please select a study and a component";
       this.dataContainer.nativeElement.innerHTML = initContent;
     }
-
   }
 }

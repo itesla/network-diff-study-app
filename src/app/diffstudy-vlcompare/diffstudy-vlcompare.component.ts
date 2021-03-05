@@ -29,6 +29,13 @@ export class DiffstudyVlcompareComponent implements OnInit {
   network1: string;
   network2: string;
   vlId: string;
+
+  network1s: string;
+  network2s: string;
+  vlIds: string;
+  network1Names: string;
+  network2Names: string;
+
   subsDict = {};
   diffResult: {};
   studies: Diffstudy[];
@@ -63,11 +70,15 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
+
     this.showDiagram = false;
   }
 
   onChangeDiffStudy(study) {
-    this.showDiagram = false;
+    this.vlIds = "";
+    this.vlevels = [];
+    this.subsDict = {};
+
     this.diffstudyService.getDiffstudyVoltageLevels(study["studyName"]).subscribe(vlevelsRes => {
       this.subsDict = {};
 
@@ -90,45 +101,53 @@ export class DiffstudyVlcompareComponent implements OnInit {
           return subVoltageMap;
         }, {});
         this.subsDict = subVoltageMap;
-
         this.vlevels = vLevels;
       }
     });
   }
 
+  getStudyAttributeOrEmptyString(attributeName:string):string {
+    if (this.study == undefined) {
+      return "";
+    } else {
+      return this.study[attributeName];
+    }
+  }
+
   networkDiff() {
     let network1Uuid = "";
     let network2Uuid = "";
-    let showDiagram = false;
     let diffResult: {};
 
     //clean global status
     this.network1 = network1Uuid;
     this.network2 = network2Uuid;
-    this.showDiagram = showDiagram;
     this.diffResult = diffResult;
+    this.showDiagram = true;
+
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
+      //console.log("$$ getDiffStudy");
       network1Uuid = diffStudyRes['network1Uuid'];
       network2Uuid = diffStudyRes['network2Uuid'];
+
       this.apiService.diffNetworksUsingGET(network1Uuid, network2Uuid, this.vlId)
         .subscribe(diffNetworksVlRes => {
+          //console.log("$$ diffSubstationUsingGET");
           diffResult = diffNetworksVlRes;
           const vlevels = diffResult["diff.VoltageLevels"];
           const branches = diffResult["diff.Branches"];
-          if ((vlevels === undefined || vlevels.length == 0) && (branches === undefined || branches.length == 0)) {
-            //same vl data
-            showDiagram = false;
-          } else {
-            //vl data differs
-            showDiagram = true;
-          }
 
           //set global status
           this.network1 = network1Uuid;
           this.network2 = network2Uuid;
-          this.showDiagram = showDiagram;
           this.diffResult = diffResult;
+
+          this.network1s = network1Uuid;
+          this.network2s = network2Uuid;
+          this.vlIds = this.vlId;
+          this.network1Names = this.getStudyAttributeOrEmptyString("network1Id");
+          this.network2Names = this.getStudyAttributeOrEmptyString("network2Id");
 
           //shows substations markers on the map
           this.placeSubstationsMarkersMap(this.study['studyName']);
@@ -165,16 +184,6 @@ export class DiffstudyVlcompareComponent implements OnInit {
       }
 
     });
-  }
-
-  getUrlSvgDiff(network1Id: string, network2Id: string) {
-    if ((network1Id === undefined || network1Id.length == 0) || (network2Id === undefined || network2Id.length == 0)
-        || (this.vlId === undefined || this.vlId.length == 0)) {
-      return "";
-    } else {
-      let url = 'http://localhost:6007/v1/networks/' + network1Id + '/svgdiff/' + network2Id + '/vl/' + this.vlId;
-      return url;
-    }
   }
 
   onMapReady(map: Map) {

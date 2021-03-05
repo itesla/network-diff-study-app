@@ -1,4 +1,3 @@
-<!--<h2>Network comparison</h2>-->
 <div>
   <div class="sidebar">
     <div class="form-group">
@@ -19,20 +18,19 @@
           <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
         </ng-template>
       </div>
-
     </div>
   </div>
 
-  <div #mytab>
+  <div>
     <hr/>
   <div>
 
     <div *ngIf="showDiagram == true">
       <span class="label">{{network1Names}}</span>
-      <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
+      <app-sdl-diff [network1]="network1s" [network2]="network2s" [pId]="subIds" pType="sub" sdlId="svg1"></app-sdl-diff>
       <p></p>
       <span class="label">{{network2Names}}</span>
-      <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
+      <app-sdl-diff [network1]="network2s" [network2]="network1s" [pId]="subIds" pType="sub" sdlId="svg2"></app-sdl-diff>
     </div>
   <!--
         <p-tabView>

@@ -1,4 +1,3 @@
-<!--<h2>Network comparison</h2>-->
 <div>
   <div class="sidebar">
     <div class="form-group">
@@ -7,42 +6,50 @@
         <option *ngFor="let stud of studies;" [ngValue]="stud">{{stud.studyName}}</option>
       </select>
     </div>
-    <!--
-    <div class="form-group">
-      <label>Voltage Level</label>
-      <input class="form-control" type="text" [(ngModel)]="vlId">
+    <div *ngIf="study != undefined">
+      <div class="form-group">
+        <label for="vlId">Voltage level</label>
+        <div *ngIf="vlevels.length == 0; else vlSelContent">....</div>
+        <ng-template #vlSelContent>
+          <select id="vlId" class="form-control" [(ngModel)]="vlId">
+            <option *ngFor="let vl of vlevels;" [ngValue]="vl">{{vl}}</option>
+          </select>
+          <p></p>
+          <button type="button" class="btn btn-info" (click)="networkDiff()">Compare</button>
+        </ng-template>
+      </div>
     </div>
-    -->
-    <div class="form-group">
-      <label for="vlId">Voltage level</label>
-      <select id="vlId" class="form-control" [(ngModel)]="vlId">
-        <option *ngFor="let vl of vlevels;" [ngValue]="vl">{{vl}}</option>
-      </select>
-    </div>
-
-    <button type="button" class="btn btn-info" (click)="networkDiff()">Compare</button>
   </div>
+
+  <div>
+    <hr/>
+  <div>
 
   <div>
     <div *ngIf="showDiagram == true">
 
       <hr/>
 
-    <p-tabView>
-      <p-tabPanel header="Network1">
-        <span class="label">{{study["network1Id"]}}</span>
-        <object id="obj1" style="width:100%; height:800px;" type="image/svg+xml">
-          <param name="src" value="{{getUrlSvgDiff(network1, network2)}}">
-        </object>
-      </p-tabPanel>
-      <p-tabPanel header="Network2">
-        <span class="label">{{study["network2Id"]}}</span>
-        <object id="obj2" style="width:100%; height:800px;" type="image/svg+xml">
-          <param name="src" value="{{getUrlSvgDiff(network2, network1)}}">
-        </object>
-      </p-tabPanel>
-    </p-tabView>
-  </div>
+      <div *ngIf="showDiagram == true">
+        <span class="label">{{network1Names}}</span>
+        <app-sdl-diff [network1]="network1s" [network2]="network2s" [pId]="vlIds" pType="vl" sdlId="svgVl1"></app-sdl-diff>
+        <p></p>
+        <span class="label">{{network2Names}}</span>
+        <app-sdl-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" pType="vl" sdlId="svgVl2"></app-sdl-diff>
+      </div>
+      <!--
+            <p-tabView>
+              <p-tabPanel header="Network1">
+                <span class="label">{{getStudyAttributeOrEmptyString("network1Id")}}</span>
+                <app-sdl-diff [network1]="network1s" [network2]="network2s" [subsId]="subIds" sdlId="svg1"></app-sdl-diff>
+              </p-tabPanel>
+              <p-tabPanel header="Network2">
+                <span class="label">{{getStudyAttributeOrEmptyString("network2Id")}}</span>
+                <app-sdl-diff [network1]="network2s" [network2]="network1s" [subsId]="subIds" sdlId="svg2"></app-sdl-diff>
+              </p-tabPanel>
+            </p-tabView>
+      -->
+    </div>
 
   <div *ngIf="diffResult">
 
