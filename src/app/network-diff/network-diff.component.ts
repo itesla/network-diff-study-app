@@ -39,7 +39,7 @@ export class NetworkDiffComponent implements OnInit {
 
   networkDiff() {
 
-    this.apiService.diffNetworksUsingGET(this.network1, this.network2, this.vlId)
+    this.apiService.diffNetworksUsingGET1(this.network1, this.network2, this.vlId)
         .subscribe(res => this.onNetworkDiffSuccess(res));
   }
 

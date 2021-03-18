@@ -15,6 +15,10 @@
             <option *ngFor="let vl of vlevels;" [ngValue]="vl">{{vl}}</option>
           </select>
           <p></p>
+          <label>Threshold</label>
+          <input class="form-control" type="number" min="0" step="0.01" [(ngModel)]="threshold" required #inThreshold="ngModel">
+          <p class="alert alert-danger invalid" *ngIf="inThreshold.errors">invalid threshold value</p>
+          <p></p>
           <button type="button" class="btn btn-info" (click)="networkDiff()">Compare</button>
         </ng-template>
       </div>
@@ -32,10 +36,10 @@
 
       <div *ngIf="showDiagram == true">
         <span class="label">{{network1Names}}</span>
-        <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="vlIds" pType="vl" sldId="svgVl1"></app-sld-diff>
+        <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="vlIds" pType="vl" sldId="svgVl1" [threshold]="thresholdS"></app-sld-diff>
         <p></p>
         <span class="label">{{network2Names}}</span>
-        <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" pType="vl" sldId="svgVl2"></app-sld-diff>
+        <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" pType="vl" sldId="svgVl2" [threshold]="thresholdS"></app-sld-diff>
       </div>
       <!--
             <p-tabView>
