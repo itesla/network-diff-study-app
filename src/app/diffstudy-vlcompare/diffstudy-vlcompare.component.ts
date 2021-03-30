@@ -50,6 +50,9 @@ export class DiffstudyVlcompareComponent implements OnInit {
 
   map: Map;
 
+  threshold: number;
+  thresholdS: number;
+
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
@@ -72,6 +75,8 @@ export class DiffstudyVlcompareComponent implements OnInit {
     });
 
     this.showDiagram = false;
+    this.threshold = 0.0;
+    this.thresholdS = this.threshold;
   }
 
   onChangeDiffStudy(study) {
@@ -119,6 +124,8 @@ export class DiffstudyVlcompareComponent implements OnInit {
     let network2Uuid = "";
     let diffResult: {};
 
+    this.thresholdS = Math.abs(this.threshold);
+
     //clean global status
     this.network1 = network1Uuid;
     this.network2 = network2Uuid;
@@ -131,7 +138,7 @@ export class DiffstudyVlcompareComponent implements OnInit {
       network1Uuid = diffStudyRes['network1Uuid'];
       network2Uuid = diffStudyRes['network2Uuid'];
 
-      this.apiService.diffNetworksUsingGET(network1Uuid, network2Uuid, this.vlId)
+      this.apiService.diffNetworksUsingGET(this.thresholdS, network1Uuid, network2Uuid, this.vlId)
         .subscribe(diffNetworksVlRes => {
           //console.log("$$ diffSubstationUsingGET");
           diffResult = diffNetworksVlRes;
