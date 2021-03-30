@@ -49,6 +49,10 @@ export class DiffstudyService {
     return this.http.get(`${this.baseUrl}/getsubscoords?diffStudyName=${name}`);
   }
 
+  getLinesCoordsGeoJson(name: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getlinescoordsgeojson?diffStudyName=${name}`);
+  }
+
   setDiffstudyZone(studyName: string, zone: string[]): Observable<Object> {
     var formData: any = new FormData();
     formData.append("zone", zone);
