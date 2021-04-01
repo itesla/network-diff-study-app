@@ -1,0 +1,39 @@
+<div>
+  <div class="sidebar">
+    <div class="form-group">
+      <label for="study">Study</label>
+      <select (ngModelChange)="onChangeDiffStudy($event)" [(ngModel)]="study" class="form-control" id="study">
+        <option *ngFor="let stud of studies;" [ngValue]="stud">{{stud.studyName}}</option>
+      </select>
+    </div>
+    <div *ngIf="study != undefined">
+      <div class="form-group">
+        <label>Threshold</label>
+        <input class="form-control" type="number" min="0" step="0.01" [(ngModel)]="threshold" required #inThreshold="ngModel">
+        <p class="alert alert-danger invalid" *ngIf="inThreshold.errors">invalid threshold value</p>
+        <p></p>
+        <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <hr/>
+    <div>
+    </div>
+
+    <div>
+      <hr>
+
+      <div (leafletMapReady)="onMapReady($event)"
+           [leafletOptions]="mapOptions"
+           class="map"
+           leaflet>
+      </div>
+
+      <hr>
+
+
+    </div>
+  </div>
+</div>

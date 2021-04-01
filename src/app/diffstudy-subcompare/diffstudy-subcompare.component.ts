@@ -185,21 +185,6 @@ export class DiffstudySubcompareComponent implements OnInit {
       }
 
     });
-    this.diffstudyService.getLinesCoordsGeoJson(studyName, this.thresholdS).subscribe(resGeo => {
-      geoJSON(resGeo, {style: function (feature) {
-        return feature.properties && feature.properties.style;
-      },
-        onEachFeature: function(feature, layer) {
-          var popupContent = "<p></p>";
-
-          if (feature.properties && feature.properties.popupContent) {
-            popupContent += feature.properties.popupContent;
-          }
-
-          layer.bindPopup(popupContent);
-        }
-      }).addTo(this.markersFeaturesGroup);
-    });
   }
 
   onMapReady(map: Map) {
