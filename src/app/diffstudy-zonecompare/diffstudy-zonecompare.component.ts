@@ -49,6 +49,8 @@ export class DiffstudyZonecompareComponent implements OnInit {
   threshold: number;
   thresholdS: number;
 
+  showSpinner: boolean = false;
+
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
@@ -72,6 +74,7 @@ export class DiffstudyZonecompareComponent implements OnInit {
 
     this.threshold = 0.0;
     this.thresholdS = this.threshold;
+    this.showSpinner = false;
   }
 
   onChangeDiffStudy(study) {
@@ -92,6 +95,7 @@ export class DiffstudyZonecompareComponent implements OnInit {
 
     this.network1 = network1Uuid;
     this.network2 = network2Uuid;
+    this.showSpinner = false;
 
     this.thresholdS = Math.abs(this.threshold);
 
@@ -106,6 +110,7 @@ export class DiffstudyZonecompareComponent implements OnInit {
     this.markersFeaturesGroup.clearLayers();
     this.controlLayers.remove();
     this.controlLayers = control.layers({}, {});
+    this.showSpinner = true;
 
     this.diffstudyService.getSubsCoordsGeoJson(studyName, this.thresholdS).subscribe(resGeo => {
       let featureGroup = geoJSON(resGeo, {
@@ -147,10 +152,22 @@ export class DiffstudyZonecompareComponent implements OnInit {
           return feature.properties && feature.properties.style;
         },
         onEachFeature: function(feature, layer) {
-          var popupContent = "<p></p>";
+          var popupContent = "<p>no data available</p>";
 
-          if (feature.properties && feature.properties.popupContent) {
-            popupContent += feature.properties.popupContent;
+          if (feature.properties && feature.properties.id && feature.properties.isDifferent ) {
+            popupContent = "<p><b>line:</b> <u>" + feature.properties.id + "</u></p>";
+            if (feature.properties.isDifferent === "true") {
+              popupContent += "<p><table class=\"table table-bordered table-sm\">" +
+              "<tr><td>t1 deltap: </td><td>" + feature.properties.t1_dp + "</td></tr>" +
+              "<tr><td>t1 deltaq: </td><td>" + feature.properties.t1_dq + "</td></tr>" +
+              "<tr><td>t1 deltai: </td><td>" + feature.properties.t1_di + "</td></tr>" +
+              "<tr><td>t2 deltap: </td><td>" + feature.properties.t2_dp + "</td></tr>" +
+              "<tr><td>t2 deltaq: </td><td>" + feature.properties.t2_dq + "</td></tr>" +
+              "<tr><td>t2 deltai: </td><td>" + feature.properties.t2_di + "</td></tr>" +
+              "</table></p>";
+             } else {
+              popupContent += "<p>no differences between the two networks   </p>";
+            }
           }
 
           layer.bindPopup(popupContent);
@@ -160,6 +177,8 @@ export class DiffstudyZonecompareComponent implements OnInit {
 
       this.controlLayers.addOverlay(featureGroup, "lines");
       this.controlLayers.addTo(this.map);
+
+      this.showSpinner = false;
     });
 
   }
