@@ -51,6 +51,8 @@ export class DiffstudyZonecompareComponent implements OnInit {
 
   showSpinner: boolean = false;
 
+  alertMessage: string = "Loading, please wait";
+
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
@@ -125,12 +127,19 @@ export class DiffstudyZonecompareComponent implements OnInit {
             });
         },
         onEachFeature: function(feature, layer) {
-          var popupContent = "<p></p>";
+          var popupContent = "<p>no data available</p>";
 
-          if (feature.properties && feature.properties.popupContent) {
-            popupContent += feature.properties.popupContent;
+          if (feature.properties && feature.properties.id) {
+            popupContent = "<p><b>substation:</b> <u>" + feature.properties.id + "</u></p>";
+            if (feature.properties.vlevels) {
+              popupContent += "<b>v.levels:</b>";
+              popupContent += '<ul class="list-group">';
+              feature.properties.vlevels.forEach(function(vlevel) {
+                popupContent += '<li class="list-group-item">'+ vlevel + '</li>';
+              });
+              popupContent += '</ul>';
+            }
           }
-
           layer.bindPopup(popupContent);
         }
       });
@@ -158,12 +167,12 @@ export class DiffstudyZonecompareComponent implements OnInit {
             popupContent = "<p><b>line:</b> <u>" + feature.properties.id + "</u></p>";
             if (feature.properties.isDifferent === "true") {
               popupContent += "<p><table class=\"table table-bordered table-sm\">" +
-              "<tr><td>t1 deltap: </td><td>" + feature.properties.t1_dp + "</td></tr>" +
-              "<tr><td>t1 deltaq: </td><td>" + feature.properties.t1_dq + "</td></tr>" +
-              "<tr><td>t1 deltai: </td><td>" + feature.properties.t1_di + "</td></tr>" +
-              "<tr><td>t2 deltap: </td><td>" + feature.properties.t2_dp + "</td></tr>" +
-              "<tr><td>t2 deltaq: </td><td>" + feature.properties.t2_dq + "</td></tr>" +
-              "<tr><td>t2 deltai: </td><td>" + feature.properties.t2_di + "</td></tr>" +
+              "<tr><td><b>t1 deltap: </b></td><td>" + feature.properties.t1_dp + "</td></tr>" +
+              "<tr><td><b>t1 deltaq: </b></td><td>" + feature.properties.t1_dq + "</td></tr>" +
+              "<tr><td><b>t1 deltai: </b></td><td>" + feature.properties.t1_di + "</td></tr>" +
+              "<tr><td><b>t2 deltap: </b></td><td>" + feature.properties.t2_dp + "</td></tr>" +
+              "<tr><td><b>t2 deltaq: </b></td><td>" + feature.properties.t2_dq + "</td></tr>" +
+              "<tr><td><b>t2 deltai: </b></td><td>" + feature.properties.t2_di + "</td></tr>" +
               "</table></p>";
              } else {
               popupContent += "<p>no differences between the two networks   </p>";
