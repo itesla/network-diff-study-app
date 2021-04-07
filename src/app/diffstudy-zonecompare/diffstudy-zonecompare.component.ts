@@ -53,6 +53,8 @@ export class DiffstudyZonecompareComponent implements OnInit {
 
   alertMessage: string = "Loading, please wait";
 
+  showMap: boolean = false;
+
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
@@ -77,6 +79,7 @@ export class DiffstudyZonecompareComponent implements OnInit {
     this.threshold = 0.0;
     this.thresholdS = this.threshold;
     this.showSpinner = false;
+    this.showMap = false;
   }
 
   onChangeDiffStudy(study) {
@@ -98,6 +101,7 @@ export class DiffstudyZonecompareComponent implements OnInit {
     this.network1 = network1Uuid;
     this.network2 = network2Uuid;
     this.showSpinner = false;
+    this.showMap = true;
 
     this.thresholdS = Math.abs(this.threshold);
 
