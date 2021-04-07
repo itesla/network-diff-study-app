@@ -23,6 +23,20 @@
         </ng-template>
       </div>
     </div>
+    <div *ngIf="showSpinner === true">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-3 d-flex justify-content-center">
+            <div class="spinner-border m-2" role="status">
+              <span class="sr-only">...</span>
+            </div>
+          </div>
+          <div class="col-sm-9 d-flex justify-content-center">
+            <div class="alert alert-info" role="alert">{{alertMessage}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="showDiagram == true">

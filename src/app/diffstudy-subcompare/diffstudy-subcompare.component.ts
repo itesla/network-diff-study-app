@@ -38,6 +38,10 @@ export class DiffstudySubcompareComponent implements OnInit {
   threshold: number;
   thresholdS: number;
 
+  showSpinner: boolean = false;
+
+  alertMessage: string = "Loading, please wait";
+
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
@@ -50,6 +54,8 @@ export class DiffstudySubcompareComponent implements OnInit {
 
     this.threshold = 0.0;
     this.thresholdS = this.threshold;
+
+    this.showSpinner = false;
   }
 
   onChangeDiffStudy(study) {
@@ -92,6 +98,8 @@ export class DiffstudySubcompareComponent implements OnInit {
 
     this.thresholdS = Math.abs(this.threshold);
 
+    this.showSpinner = true;
+
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
       let network1Uuid = diffStudyRes['network1Uuid'];
       let network2Uuid = diffStudyRes['network2Uuid'];
@@ -108,6 +116,8 @@ export class DiffstudySubcompareComponent implements OnInit {
           this.subIds = this.subId;
           this.network1Names = this.getStudyAttributeOrEmptyString("network1Id");
           this.network2Names = this.getStudyAttributeOrEmptyString("network2Id");
+
+          this.showSpinner = false;
         });
 
     });
