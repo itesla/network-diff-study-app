@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
@@ -17,7 +17,7 @@ import {
   marker,
   point,
   tileLayer,
-  geoJSON, Layer, control, Control
+  geoJSON, Layer, control, Control, map
 } from 'leaflet';
 
 @Component({
@@ -26,39 +26,36 @@ import {
   styleUrls: ['./diffstudy-zonecompare.component.css']
 })
 
-export class DiffstudyZonecompareComponent implements OnInit {
-  network1: string;
-  network2: string;
-
-  network1s: string;
-  network2s: string;
-  network1Names: string;
-  network2Names: string;
-
+export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnDestroy{
   studies: Diffstudy[];
-  study: Object;
+  study: Diffstudy;
+  threshold: number;
+  thresholdS: number;
+  showSpinner: boolean = false;
+  alertMessage: string = "Loading, please wait";
 
-  mapOptions: any;
+  map: Map;
+
   streetmap: any;
   markersFeaturesGroup: FeatureGroup = new FeatureGroup();
   franceCenteredCoords = latLng(46.624738528968436, 2.4264306819068198);
   controlLayers: Control.Layers = control.layers({}, {});
 
-  map: Map;
-
-  threshold: number;
-  thresholdS: number;
-
-  showSpinner: boolean = false;
-
-  alertMessage: string = "Loading, please wait";
-
-  showMap: boolean = false;
-
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
-  ngOnInit(): void {
+  ngOnDestroy(): void {
+    if (this.map) {
+      this.map.off();
+      this.map.remove();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.map) {
+      this.map.off();
+      this.map.remove();
+    }
     this.streetmap = tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
         maxZoom: 18,
@@ -66,12 +63,15 @@ export class DiffstudyZonecompareComponent implements OnInit {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       });
 
-    this.mapOptions = {
-      layers: [this.streetmap, this.markersFeaturesGroup],
+    this.map = map('map', {
+      center: this.franceCenteredCoords,
       zoom: 6,
-      center: this.franceCenteredCoords
-    };
+      attributionControl: false,
+      layers:  [this.streetmap, this.markersFeaturesGroup]
+    });
+  }
 
+  ngOnInit(): void {
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
@@ -79,40 +79,22 @@ export class DiffstudyZonecompareComponent implements OnInit {
     this.threshold = 0.0;
     this.thresholdS = this.threshold;
     this.showSpinner = false;
-    this.showMap = false;
   }
 
   onChangeDiffStudy(study) {
   }
 
-  getStudyAttributeOrEmptyString(attributeName:string):string {
-    if (this.study == undefined) {
-      return "";
-    } else {
-      return this.study[attributeName];
-    }
-  }
-
   networkDiff() {
     //clean global status
-    let network1Uuid = "";
-    let network2Uuid = "";
-
-    this.network1 = network1Uuid;
-    this.network2 = network2Uuid;
     this.showSpinner = false;
-    this.showMap = true;
-
     this.thresholdS = Math.abs(this.threshold);
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
-      network1Uuid = diffStudyRes['network1Uuid'];
-      network2Uuid = diffStudyRes['network2Uuid'];
-      this.placeElementsOnTheMap(this.study['studyName']);
+      this.populateMap(this.study['studyName']);
     });
   }
 
-  placeElementsOnTheMap(studyName: string) {
+  populateMap(studyName: string) {
     this.markersFeaturesGroup.clearLayers();
     this.controlLayers.remove();
     this.controlLayers = control.layers({}, {});
@@ -195,9 +177,4 @@ export class DiffstudyZonecompareComponent implements OnInit {
     });
 
   }
-
-  onMapReady(map: Map) {
-    this.map = map;
-  }
-
 }

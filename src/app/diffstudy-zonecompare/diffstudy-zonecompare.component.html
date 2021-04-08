@@ -31,13 +31,9 @@
     </div>
   </div>
 
-  <div *ngIf="showMap == true">
+  <div>
     <hr>
-    <div (leafletMapReady)="onMapReady($event)"
-         [leafletOptions]="mapOptions"
-         class="map"
-         leaflet>
-    </div>
+    <div id="map" #map></div>
     <hr>
   </div>
 </div>
