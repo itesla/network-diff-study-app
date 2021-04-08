@@ -10,14 +10,18 @@ import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
 import {
+  control,
+  Control,
   FeatureGroup,
+  geoJSON,
   icon,
   latLng,
+  Layer,
   Map,
+  map,
   marker,
   point,
-  tileLayer,
-  geoJSON, Layer, control, Control, map
+  tileLayer
 } from 'leaflet';
 
 @Component({
@@ -30,78 +34,106 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   studies: Diffstudy[];
   study: Diffstudy;
   threshold: number;
-  thresholdS: number;
   showSpinner: boolean = false;
   alertMessage: string = "Loading, please wait";
 
   map: Map;
 
-  streetmap: any;
-  markersFeaturesGroup: FeatureGroup = new FeatureGroup();
+  substationsLayer: FeatureGroup;
+  linesLayer: FeatureGroup;
+  featureGroup: FeatureGroup = new FeatureGroup();
   franceCenteredCoords = latLng(46.624738528968436, 2.4264306819068198);
-  controlLayers: Control.Layers = control.layers({}, {});
+  controlLayers: Control.Layers;
 
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
-  ngOnDestroy(): void {
+  removeExistingMapData(): void {
     if (this.map) {
       this.map.off();
       this.map.remove();
     }
   }
 
-  ngAfterViewInit(): void {
-    if (this.map) {
-      this.map.off();
-      this.map.remove();
-    }
-    this.streetmap = tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  ngOnDestroy(): void {
+    this.removeExistingMapData();
+  }
+
+  addBaseLayers(aMap: Map): any {
+    let openStreetTileLayer = tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
-        maxZoom: 18,
+        maxZoom: 19,
         detectRetina: true,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       });
 
+    let satelliteTileLayer = tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 19,
+        detectRetina: true,
+        attribution: '&copy; <a href="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer">Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community </a> contributors'
+      });
+
+    let darkTileLayer = tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+      {
+        maxZoom: 19,
+        detectRetina: true,
+        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org">OpenMapTiles</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+      });
+
+    //add the default base layer to the map
+    openStreetTileLayer.addTo(aMap);
+
+    return {
+      "Dark": darkTileLayer,
+      "Satellite": satelliteTileLayer,
+      "OpenStreetMap": openStreetTileLayer
+    };
+  }
+
+  ngAfterViewInit(): void {
+    this.removeExistingMapData();
+
     this.map = map('map', {
       center: this.franceCenteredCoords,
       zoom: 6,
-      attributionControl: false,
-      layers:  [this.streetmap, this.markersFeaturesGroup]
+      attributionControl: true,
+      layers:  [this.featureGroup]
     });
+
+    let baseMaps = this.addBaseLayers(this.map);
+
+    this.controlLayers = control.layers(baseMaps);
+    this.controlLayers.addTo(this.map);
   }
 
   ngOnInit(): void {
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
-
     this.threshold = 0.0;
-    this.thresholdS = this.threshold;
     this.showSpinner = false;
-  }
-
-  onChangeDiffStudy(study) {
   }
 
   networkDiff() {
-    //clean global status
     this.showSpinner = false;
-    this.thresholdS = Math.abs(this.threshold);
-
-    this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
-      this.populateMap(this.study['studyName']);
-    });
+    this.populateMap(this.study['studyName'], Math.abs(this.threshold));
   }
 
-  populateMap(studyName: string) {
-    this.markersFeaturesGroup.clearLayers();
-    this.controlLayers.remove();
-    this.controlLayers = control.layers({}, {});
+  populateMap(studyName: string, threshold: number) {
     this.showSpinner = true;
 
-    this.diffstudyService.getSubsCoordsGeoJson(studyName, this.thresholdS).subscribe(resGeo => {
-      let featureGroup = geoJSON(resGeo, {
+    this.featureGroup.clearLayers();
+
+    if (this.substationsLayer) {
+      this.controlLayers.removeLayer(this.substationsLayer);
+    }
+    if (this.linesLayer) {
+      this.controlLayers.removeLayer(this.linesLayer);
+    }
+
+    this.diffstudyService.getSubsCoordsGeoJson(studyName, threshold).subscribe(resGeo => {
+      this.substationsLayer = geoJSON(resGeo, {
         pointToLayer: function(feature, latLng): Layer {
           return marker(
             latLng, {
@@ -113,7 +145,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
             });
         },
         onEachFeature: function(feature, layer) {
-          var popupContent = "<p>no data available</p>";
+          let popupContent = "<p>no data available</p>";
 
           if (feature.properties && feature.properties.id) {
             popupContent = "<p><b>substation:</b> <u>" + feature.properties.id + "</u></p>";
@@ -129,25 +161,25 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
           layer.bindPopup(popupContent);
         }
       });
-      featureGroup.addTo(this.markersFeaturesGroup);
+      this.substationsLayer.addTo(this.featureGroup);
 
-      //adapt map size to the substations set
-      if (this.markersFeaturesGroup.getBounds().isValid()) {
-        this.map.fitBounds(this.markersFeaturesGroup.getBounds(), {
+      //adapt map size to the bounding box delimited by the substation set
+      if (this.featureGroup.getBounds().isValid()) {
+        this.map.fitBounds(this.featureGroup.getBounds(), {
           padding: point(48, 48),
           animate: true
         });
       }
 
-      this.controlLayers.addOverlay(featureGroup, "substations");
+      this.controlLayers.addOverlay(this.substationsLayer, "Substations");
     });
 
-    this.diffstudyService.getLinesCoordsGeoJson(studyName, this.thresholdS).subscribe(resGeo => {
-      let featureGroup = geoJSON(resGeo, {style: function (feature) {
+    this.diffstudyService.getLinesCoordsGeoJson(studyName, threshold).subscribe(resGeo => {
+      this.linesLayer = geoJSON(resGeo, {style: function (feature) {
           return feature.properties && feature.properties.style;
         },
         onEachFeature: function(feature, layer) {
-          var popupContent = "<p>no data available</p>";
+          let popupContent = "<p>no data available</p>";
 
           if (feature.properties && feature.properties.id && feature.properties.isDifferent ) {
             popupContent = "<p><b>line:</b> <u>" + feature.properties.id + "</u></p>";
@@ -168,10 +200,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
           layer.bindPopup(popupContent);
         }
       });
-      featureGroup.addTo(this.markersFeaturesGroup);
-
-      this.controlLayers.addOverlay(featureGroup, "lines");
-      this.controlLayers.addTo(this.map);
+      this.linesLayer.addTo(this.featureGroup);
+      this.controlLayers.addOverlay(this.linesLayer, "Lines");
 
       this.showSpinner = false;
     });
