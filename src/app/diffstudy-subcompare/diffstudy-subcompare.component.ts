@@ -9,15 +9,6 @@ import {Component, OnInit} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
-import {
-  FeatureGroup,
-  icon,
-  latLng,
-  Map,
-  marker,
-  point,
-  tileLayer
-} from 'leaflet';
 
 @Component({
   selector: 'comparevl',
@@ -42,35 +33,19 @@ export class DiffstudySubcompareComponent implements OnInit {
   studies: Diffstudy[];
   study: Object;
 
-  mapOptions: any;
-  streetmap: any;
-  markersFeaturesGroup: FeatureGroup = new FeatureGroup();
-  franceCenteredCoords = latLng(46.624738528968436, 2.4264306819068198);
-
-  map: Map;
-
   showDiagram: boolean = false;
 
   threshold: number;
   thresholdS: number;
 
+  showSpinner: boolean = false;
+
+  alertMessage: string = "Loading, please wait";
+
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
   ngOnInit(): void {
-    this.streetmap = tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        maxZoom: 18,
-        detectRetina: true,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      });
-
-    this.mapOptions = {
-      layers: [this.streetmap, this.markersFeaturesGroup],
-      zoom: 6,
-      center: this.franceCenteredCoords
-    };
-
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
@@ -79,6 +54,8 @@ export class DiffstudySubcompareComponent implements OnInit {
 
     this.threshold = 0.0;
     this.thresholdS = this.threshold;
+
+    this.showSpinner = false;
   }
 
   onChangeDiffStudy(study) {
@@ -90,7 +67,6 @@ export class DiffstudySubcompareComponent implements OnInit {
       if (this.study['zone'] === undefined || this.study['zone'] == 0) {
         //what happens when there are no zones?
       } else {
-
         let subVoltageMap = Object.values(vlevelsRes).reduce((subVoltageMap, item) => {
           if (this.study['zone'].includes(item.substationId)) {
             const asub = (subVoltageMap[item.substationId] || []);
@@ -114,30 +90,22 @@ export class DiffstudySubcompareComponent implements OnInit {
   }
 
   networkDiff() {
-    let network1Uuid = "";
-    let network2Uuid = "";
-    let diffResult: {};
+    //clean global status
+    this.network1 = "";
+    this.network2 = "";
+    this.diffResult = {'diff.VoltageLevels': [], 'diff.Branches': []};
+    this.showDiagram = true;
 
     this.thresholdS = Math.abs(this.threshold);
 
-    //clean global status
-    this.network1 = network1Uuid;
-    this.network2 = network2Uuid;
-    this.diffResult = diffResult;
-    this.showDiagram = true;
+    this.showSpinner = true;
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
-      //console.log("$$ getDiffStudy");
-      network1Uuid = diffStudyRes['network1Uuid'];
-      network2Uuid = diffStudyRes['network2Uuid'];
+      let network1Uuid = diffStudyRes['network1Uuid'];
+      let network2Uuid = diffStudyRes['network2Uuid'];
 
       this.apiService.diffSubstationUsingGET(this.thresholdS, network1Uuid, network2Uuid, this.subId)
-        .subscribe(diffNetworksVlRes => {
-          //console.log("$$ diffSubstationUsingGET");
-          diffResult = diffNetworksVlRes;
-          const vlevels = diffResult["diff.VoltageLevels"];
-          const branches = diffResult["diff.Branches"];
-
+        .subscribe(diffResult => {
           //set global status
           this.network1 = network1Uuid;
           this.network2 = network2Uuid;
@@ -149,45 +117,9 @@ export class DiffstudySubcompareComponent implements OnInit {
           this.network1Names = this.getStudyAttributeOrEmptyString("network1Id");
           this.network2Names = this.getStudyAttributeOrEmptyString("network2Id");
 
-          //shows substations markers on the map
-          this.placeSubstationsMarkersMap(this.study['studyName']);
+          this.showSpinner = false;
         });
 
     });
   }
-
-  placeSubstationsMarkersMap(studyName: string) {
-    this.markersFeaturesGroup.clearLayers();
-    this.diffstudyService.getSubstationsCoords(studyName).subscribe(resGeo => {
-
-      for (let i = 0; i < resGeo.length; i++) {
-        let vlevelsHtml = '<h4>' + resGeo[i].id + '</h4>';
-        for (let vli = 0; vli < this.subsDict[resGeo[i].id].length; vli++) {
-          vlevelsHtml = vlevelsHtml + '<p>' + this.subsDict[resGeo[i].id][vli] + '</p>';
-        }
-
-        let substationMarker = marker([resGeo[i].coordinate.lat, resGeo[i].coordinate.lon], {
-          icon: icon({
-            iconSize: [30, 30],
-            iconUrl: (resGeo[i].id.includes(this.subId)) ? 'assets/substation_blue.png' : 'assets/substation.png'
-          })
-        }).on('click', () => {
-        }).bindPopup(vlevelsHtml);
-        substationMarker.addTo(this.markersFeaturesGroup);
-      }
-
-      if (this.markersFeaturesGroup.getLayers().length >0) {
-        this.map.fitBounds(this.markersFeaturesGroup.getBounds(), {
-          padding: point(48, 48),
-          animate: true
-        });
-      }
-
-    });
-  }
-
-  onMapReady(map: Map) {
-    this.map = map;
-  }
-
 }
