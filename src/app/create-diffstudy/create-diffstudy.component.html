@@ -1,74 +1,96 @@
 <div>
   <div class="sidebar">
-    <div [hidden]="submitted" style="width: 300px;">
-      <form (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm">
-        <div class="form-group">
-          <label for="diffStudyname">Name</label>
-          <input type="text" class="form-control" id="diffStudyname"
-                 #sname="ngModel" [ngClass]="{ 'is-invalid': f.submitted && sname.invalid }" required
-                 [(ngModel)]="newdiffstudy.diffStudyname" name="diffStudyname" #aname="ngModel">
-          <div *ngIf="f.submitted && sname.invalid" class="invalid-feedback">
-            <div *ngIf="sname.errors.required">name is required</div>
+    <div style="width: 300px;">
+      <div>
+        <form #f="ngForm" (ngSubmit)="f.form.valid && onSubmit()">
+          <div class="form-group">
+            <label for="diffStudyname">Name</label>
+            <input #aname="ngModel" #sname="ngModel" [(ngModel)]="newdiffstudy.diffStudyname"
+                   [ngClass]="{ 'is-invalid': f.submitted && sname.invalid }" class="form-control" id="diffStudyname"
+                   name="diffStudyname" required type="text">
+            <div *ngIf="f.submitted && sname.invalid" class="invalid-feedback">
+              <div *ngIf="sname.errors.required">name is required</div>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="description">Description</label>
-          <input type="text" class="form-control" id="description"
-                 #sdesc="ngModel" [ngClass]="{ 'is-invalid': f.submitted && sdesc.invalid }" required
-                 [(ngModel)]="newdiffstudy.description" name="description">
-          <div *ngIf="f.submitted && sdesc.invalid" class="invalid-feedback">
-            <div *ngIf="sdesc.errors.required">description is required</div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input #sdesc="ngModel" [(ngModel)]="newdiffstudy.description"
+                   [ngClass]="{ 'is-invalid': f.submitted && sdesc.invalid }"
+                   class="form-control" id="description" name="description"
+                   required type="text">
+            <div *ngIf="f.submitted && sdesc.invalid" class="invalid-feedback">
+              <div *ngIf="sdesc.errors.required">description is required</div>
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for="case1Uuid">Case1Uuid</label>
-          <input #searchBox1 type="text" class="form-control" id="case1Uuid"
-                 #scase1="ngModel" [ngClass]="{ 'is-invalid': f.submitted && scase1.invalid }" required
-                 [(ngModel)]="newdiffstudy.case1Uuid" name="case1Uuid" (input)="search1(searchBox1.value)">
-          <div *ngIf="f.submitted && scase1.invalid" class="invalid-feedback">
-            <div *ngIf="scase1.errors.required">Case1Uuid is required</div>
+          <div class="form-group">
+            <label for="case1Uuid">Case1Uuid</label>
+            <input #scase1="ngModel" #searchBox1 (input)="search1(searchBox1.value)"
+                   [(ngModel)]="newdiffstudy.case1Uuid"
+                   [ngClass]="{ 'is-invalid': f.submitted && scase1.invalid }" class="form-control" id="case1Uuid"
+                   name="case1Uuid" required type="text">
+            <div *ngIf="f.submitted && scase1.invalid" class="invalid-feedback">
+              <div *ngIf="scase1.errors.required">Case1Uuid is required</div>
+            </div>
+            <ul class="search-result">
+              <li (click)="onSelect1(case.uuid)" *ngFor="let case of cases1 | async">
+                <div>{{case.name}}</div>
+              </li>
+            </ul>
           </div>
-          <ul class="search-result">
-            <li *ngFor="let case of cases1 | async"  (click)="onSelect1(case.uuid)">
-              <div>{{case.name}}</div>
-            </li>
-          </ul>
-        </div>
-        <div class="form-group">
-          <label for="case2Uuid">Case2Uuid</label>
-          <input #searchBox2 type="text" class="form-control" id="case2Uuid"
-                 #scase2="ngModel" [ngClass]="{ 'is-invalid': f.submitted && scase2.invalid }" required
-                 [(ngModel)]="newdiffstudy.case2Uuid" name="case2Uuid" (input)="search2(searchBox2.value)">
-          <div *ngIf="f.submitted && scase2.invalid" class="invalid-feedback">
-            <div *ngIf="scase2.errors.required">Case2Uuid is required</div>
+          <div class="form-group">
+            <label for="case2Uuid">Case2Uuid</label>
+            <input #scase2="ngModel" #searchBox2 (input)="search2(searchBox2.value)"
+                   [(ngModel)]="newdiffstudy.case2Uuid"
+                   [ngClass]="{ 'is-invalid': f.submitted && scase2.invalid }" class="form-control" id="case2Uuid"
+                   name="case2Uuid" required type="text">
+            <div *ngIf="f.submitted && scase2.invalid" class="invalid-feedback">
+              <div *ngIf="scase2.errors.required">Case2Uuid is required</div>
+            </div>
+            <ul class="search-result">
+              <li (click)="onSelect2(case.uuid)" *ngFor="let case of cases2 | async">
+                <div>{{case.name}}</div>
+              </li>
+            </ul>
           </div>
-          <ul class="search-result">
-            <li *ngFor="let case of cases2 | async"  (click)="onSelect2(case.uuid)">
-              <div>{{case.name}}</div>
-            </li>
-          </ul>
-        </div>
-        <button type="submit" class="btn btn-info">Create study</button>
-      </form>
-    </div>
-
-    <div [hidden]="!submitted">
-      <h4>New diff-study submitted</h4>
-
-      <div>name: {{newdiffstudy.diffStudyname}}</div>
-      <div>description: {{newdiffstudy.description}}</div>
-      <div>case1 uuid: {{newdiffstudy.case1Uuid}}</div>
-      <div>case2 uuid: {{newdiffstudy.case2Uuid}}</div>
-      <br>
-      <div *ngIf="!createErrors" class="alert-success">
-        <div>Diff case created.</div>
-      </div>
-      <div *ngIf="createErrors" class="alert-warning">
-        <div>Could not create diff case</div>
+          <button [disabled]="showSpinner" class="btn btn-info" type="submit">Create study</button>
+        </form>
       </div>
       <br>
-      <button class="btn btn-success" (click)="newNewDiffstudy()">Back</button>
+      <div *ngIf="showSpinner === true">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-3 d-flex justify-content-center">
+              <div class="spinner-border m-2" role="status">
+                <span class="sr-only">...</span>
+              </div>
+            </div>
+            <div class="col-sm-9 d-flex justify-content-center">
+              <div class="alert alert-info" role="alert">{{alertMessage}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
   </div>
+
+  <div [hidden]="!processCompleted">
+    <hr>
+    <div *ngIf="!createErrors ; else studyNotCreated" class="alert-success">
+      <div>Diff study created.</div>
+    </div>
+    <ng-template #studyNotCreated>
+    <div class="alert-warning">
+      <div>Could not create diff study: {{errorMsg}}</div>
+    </div>
+    </ng-template>
+    <br>
+    <div>
+      <div>name: <b>{{newdiffstudy.diffStudyname}}</b></div>
+      <div>description: <b>{{newdiffstudy.description}}</b></div>
+      <div>case1 uuid: <b>{{newdiffstudy.case1Uuid}}</b></div>
+      <div>case2 uuid: <b>{{newdiffstudy.case2Uuid}}</b></div>
+    </div>
+    <br>
+  </div>
+
 </div>

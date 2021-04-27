@@ -41,6 +41,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
   substationsLayer: FeatureGroup;
   linesLayer: FeatureGroup;
+  linesSimpleViewLayer: FeatureGroup;
   featureGroup: FeatureGroup = new FeatureGroup();
   franceCenteredCoords = latLng(46.624738528968436, 2.4264306819068198);
   controlLayers: Control.Layers;
@@ -131,10 +132,17 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     if (this.linesLayer) {
       this.controlLayers.removeLayer(this.linesLayer);
     }
+    if (this.linesSimpleViewLayer) {
+      this.controlLayers.removeLayer(this.linesSimpleViewLayer);
+    }
 
-    this.diffstudyService.getSubsCoordsGeoJson(studyName, threshold).subscribe(resGeo => {
-      this.substationsLayer = geoJSON(resGeo, {
-        pointToLayer: function(feature, latLng): Layer {
+    this.diffstudyService.getGeoJsons(studyName, threshold).subscribe(resGeo => {
+      let subsLayer = JSON.parse(resGeo['layers'][0]);
+      let linesDetailedLayer = JSON.parse(resGeo['layers'][1]);
+      let linesSimpleLayer = JSON.parse(resGeo['layers'][2]);
+
+      this.substationsLayer = geoJSON(subsLayer, {
+        pointToLayer: function (feature, latLng): Layer {
           return marker(
             latLng, {
               icon: icon({
@@ -144,22 +152,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
               title: feature.properties.id
             });
         },
-        onEachFeature: function(feature, layer) {
-          let popupContent = "<p>no data available</p>";
-
-          if (feature.properties && feature.properties.id) {
-            popupContent = "<p><b>substation:</b> <u>" + feature.properties.id + "</u></p>";
-            if (feature.properties.vlevels) {
-              popupContent += "<b>v.levels:</b>";
-              popupContent += '<ul class="list-group">';
-              feature.properties.vlevels.forEach(function(vlevel) {
-                popupContent += '<li class="list-group-item">'+ vlevel + '</li>';
-              });
-              popupContent += '</ul>';
-            }
-          }
-          layer.bindPopup(popupContent);
-        }
+        onEachFeature: this.getOnEachFeatureSubs()
       });
       this.substationsLayer.addTo(this.featureGroup);
 
@@ -172,39 +165,80 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       }
 
       this.controlLayers.addOverlay(this.substationsLayer, "Substations");
-    });
 
-    this.diffstudyService.getLinesCoordsGeoJson(studyName, threshold).subscribe(resGeo => {
-      this.linesLayer = geoJSON(resGeo, {style: function (feature) {
+
+      this.linesLayer = geoJSON(linesDetailedLayer, {
+        style: function (feature) {
           return feature.properties && feature.properties.style;
         },
-        onEachFeature: function(feature, layer) {
-          let popupContent = "<p>no data available</p>";
-
-          if (feature.properties && feature.properties.id && feature.properties.isDifferent ) {
-            popupContent = "<p><b>line:</b> <u>" + feature.properties.id + "</u></p>";
-            if (feature.properties.isDifferent === "true") {
-              popupContent += "<p><table class=\"table table-bordered table-sm\">" +
-              "<tr><td><b>t1 deltap: </b></td><td>" + feature.properties.t1_dp + "</td></tr>" +
-              "<tr><td><b>t1 deltaq: </b></td><td>" + feature.properties.t1_dq + "</td></tr>" +
-              "<tr><td><b>t1 deltai: </b></td><td>" + feature.properties.t1_di + "</td></tr>" +
-              "<tr><td><b>t2 deltap: </b></td><td>" + feature.properties.t2_dp + "</td></tr>" +
-              "<tr><td><b>t2 deltaq: </b></td><td>" + feature.properties.t2_dq + "</td></tr>" +
-              "<tr><td><b>t2 deltai: </b></td><td>" + feature.properties.t2_di + "</td></tr>" +
-              "</table></p>";
-             } else {
-              popupContent += "<p>no differences between the two networks   </p>";
-            }
-          }
-
-          layer.bindPopup(popupContent);
-        }
+        onEachFeature: this.getOnEachFeatureLines()
       });
       this.linesLayer.addTo(this.featureGroup);
-      this.controlLayers.addOverlay(this.linesLayer, "Lines");
+      this.controlLayers.addOverlay(this.linesLayer, "Lines (detailed view)");
+
+
+      this.linesSimpleViewLayer = geoJSON(linesSimpleLayer, {
+        style: function (feature) {
+          return feature.properties && feature.properties.style;
+        },
+        onEachFeature: this.getOnEachFeatureLines()
+      });
+      //do not add this layer to the map right now, so it is not displayed by default
+      //this.linesLayer.addTo(this.featureGroup);
+      //add it to the controls, so it can be checked and displayed
+      this.controlLayers.addOverlay(this.linesSimpleViewLayer, "Lines (simple view)");
 
       this.showSpinner = false;
     });
 
+  }
+
+  private getOnEachFeatureSubs() {
+    return function (feature, layer) {
+      let popupContent = "<p>no data available</p>";
+
+      if (feature.properties && feature.properties.id) {
+        popupContent = "<p><b>substation:</b> <u>" + feature.properties.id + "</u></p>";
+        if (feature.properties.vlevels) {
+          popupContent += "<b>voltage levels:</b>";
+          popupContent += "<table class=\"table table-bordered table-sm\">";
+          feature.properties.vlevels.forEach(function (vlevel) {
+            if (vlevel['isDifferent'] === "true") {
+              popupContent += "<tr><td rowspan='2'><u>" + vlevel['id'] +
+                "<u></td><td><b>delta minV</b></td><td>" + vlevel['minVDelta'] + "</td></tr>";
+              popupContent += "<tr><td><b>delta maxV</b></td><td>" + vlevel['maxVDelta'] + "</td></tr>";
+            } else {
+              popupContent += "<tr><td><u>" + vlevel['id'] + "</u></td><td colspan='2'>no differences</td></tr>";
+            }
+          });
+          popupContent += "</table>";
+        }
+      }
+      layer.bindPopup(popupContent);
+    };
+  }
+
+  private getOnEachFeatureLines() {
+    return function (feature, layer) {
+      let popupContent = "<p>no data available</p>";
+
+      if (feature.properties && feature.properties.id && feature.properties.isDifferent) {
+        popupContent = "<p><b>line:</b> <u>" + feature.properties.id + "</u></p>";
+        if (feature.properties.isDifferent === "true") {
+          popupContent += "<p><table class=\"table table-bordered table-sm\">" +
+            "<tr><td><b>t1 delta p: </b></td><td>" + feature.properties.t1_dp + "</td></tr>" +
+            "<tr><td><b>t1 delta q: </b></td><td>" + feature.properties.t1_dq + "</td></tr>" +
+            "<tr><td><b>t1 delta i: </b></td><td>" + feature.properties.t1_di + "</td></tr>" +
+            "<tr><td><b>t2 delta p: </b></td><td>" + feature.properties.t2_dp + "</td></tr>" +
+            "<tr><td><b>t2 delta q: </b></td><td>" + feature.properties.t2_dq + "</td></tr>" +
+            "<tr><td><b>t2 delta i: </b></td><td>" + feature.properties.t2_di + "</td></tr>" +
+            "</table></p>";
+        } else {
+          popupContent += "<p>no differences between the two networks   </p>";
+        }
+      }
+
+      layer.bindPopup(popupContent);
+    };
   }
 }

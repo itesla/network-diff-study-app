@@ -1,14 +1,14 @@
 /**
- * Copyright (c) 2020, RTE (http://www.rte-france.com)
+ * Copyright (c) 2020-2021, RTE (http://www.rte-france.com)
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { DiffstudyService } from '../api-diffstudy-client/diffstudy.service';
-import { NewDiffstudy } from '../api-diffstudy-client/newdiffstudy';
-import { Observable, Subject } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
+import {NewDiffstudy} from '../api-diffstudy-client/newdiffstudy';
+import {Observable, Subject} from 'rxjs';
 import {
   debounceTime, distinctUntilChanged, switchMap
 } from 'rxjs/operators';
@@ -23,18 +23,20 @@ import {CaseService} from "../api-case-client/case.service";
 export class CreateDiffstudyComponent implements OnInit {
   cases1: Observable<Case[]>;
   cases2: Observable<Case[]>;
-  private searchTerms1 = new Subject<string>();
-  private searchTerms2 = new Subject<string>();
-
-  private case1: string;
-  private case2: string;
-
-
   newdiffstudy: NewDiffstudy = new NewDiffstudy();
   submitted = false;
   createErrors = false;
+  processCompleted = false;
+  showSpinner: boolean = false;
+  alertMessage: string = "Processing, please wait";
+  errorMsg: string = "";
+  private searchTerms1 = new Subject<string>();
+  private searchTerms2 = new Subject<string>();
+  private case1: string;
+  private case2: string;
 
-  constructor(private diffstudyService: DiffstudyService, private caseService: CaseService) { }
+  constructor(private diffstudyService: DiffstudyService, private caseService: CaseService) {
+  }
 
   search1(term: string): void {
     this.searchTerms1.next(term);
@@ -45,6 +47,9 @@ export class CreateDiffstudyComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.showSpinner = false;
+    this.processCompleted = false;
+
     this.cases1 = this.searchTerms1.pipe(
       // wait 300ms after each keystroke before considering the term
       debounceTime(300),
@@ -54,7 +59,7 @@ export class CreateDiffstudyComponent implements OnInit {
 
       // switch to new search observable each time the term changes
       switchMap((term: string) => this.caseService.searchCases(term)),
-      );
+    );
     this.cases2 = this.searchTerms2.pipe(
       // wait 300ms after each keystroke before considering the term
       debounceTime(300),
@@ -75,16 +80,34 @@ export class CreateDiffstudyComponent implements OnInit {
   }
 
   save() {
+    this.processCompleted = false;
+    this.createErrors = false;
+    this.errorMsg = "";
+    this.showSpinner = true;
     this.diffstudyService.createDiffstudy(this.newdiffstudy)
-      .subscribe(data => console.log(data), error => {
+      .subscribe(data => {
+        //console.log(data);
+      }, error => {
         console.log(error);
         this.createErrors = true;
-      }, () => console.log("request completed"));
+        this.showSpinner = false;
+        this.processCompleted = true;
+        if ('error' in error) {
+          this.errorMsg = error.error;
+        } else {
+          this.errorMsg = "ERROR";
+        }
+      }, () => {
+        console.log("request completed");
+        this.createErrors = false;
+        this.showSpinner = false;
+        this.processCompleted = true;
+        this.errorMsg = "";
+      });
   }
 
   onSubmit() {
     this.submitted = true;
-    this.createErrors = false;
     this.save();
     //console.log(this.newdiffstudy);
     this.searchTerms1.next('');

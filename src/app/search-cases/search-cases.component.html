@@ -1,5 +1,5 @@
 <!--<h2>Search cases</h2>-->
-<div>
+<div xmlns="http://www.w3.org/1999/html">
   <div class="sidebar">
 
     <div>
@@ -15,10 +15,15 @@
       </form>
     </div>
   </div>
+  <div class="align-content-start">
     <br>
-    <ul>
-      <li *ngFor="let case of cases">
-        <h4>{{case.name}} ({{case.uuid}})</h4>
+    <ul class="list-group list-group-flush">
+      <li *ngFor="let case of cases" class="list-group-item">
+        <div>
+          <h5>{{case.name}}</h5>
+        </div>
+        <p>uuid: {{case.uuid}}</p>
       </li>
     </ul>
+  </div>
 </div>

@@ -11,27 +11,32 @@
       <label>Please select a study</label>
     </div>
     <ng-template #studyInContext>
-      <div class="form-group">
-        <label>Threshold</label>
-        <input class="form-control" type="number" min="0" step="0.01" [(ngModel)]="threshold" required #inThreshold="ngModel">
-        <p class="alert alert-danger invalid" *ngIf="inThreshold.errors">invalid threshold value</p>
-        <p></p>
-        <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
-      </div>
-      <div *ngIf="showSpinner === true">
-        <div class="container">
-          <div class="row">
-            <div class="col-sm-3 d-flex justify-content-center">
-              <div class="spinner-border m-2" role="status">
-                <span class="sr-only">...</span>
+      <div *ngIf="study['zone'].length != 0; else emptyZone">
+        <div class="form-group">
+          <label>Threshold</label>
+          <input class="form-control" type="number" min="0" step="0.01" [(ngModel)]="threshold" required #inThreshold="ngModel">
+          <p class="alert alert-danger invalid" *ngIf="inThreshold.errors">invalid threshold value</p>
+          <p></p>
+          <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
+        </div>
+        <div *ngIf="showSpinner === true">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-3 d-flex justify-content-center">
+                <div class="spinner-border m-2" role="status">
+                  <span class="sr-only">...</span>
+                </div>
               </div>
-            </div>
-            <div class="col-sm-9 d-flex justify-content-center">
-              <div class="alert alert-info" role="alert">{{alertMessage}}</div>
+              <div class="col-sm-9 d-flex justify-content-center">
+                <div class="alert alert-info" role="alert">{{alertMessage}}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <ng-template #emptyZone>
+        <p class="alert alert-warning">Zone empty! Please add one or more substations to study {{study['studyName']}}.</p>
+      </ng-template>
     </ng-template>
   </div>
 

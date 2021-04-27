@@ -7,22 +7,27 @@
       </select>
     </div>
     <div *ngIf="study != undefined">
-      <div class="form-group">
-        <label for="vlId">Voltage level</label>
-        <div *ngIf="vlevels.length == 0; else vlSelContent">....</div>
-        <ng-template #vlSelContent>
-          <select [(ngModel)]="vlId" class="form-control" id="vlId">
-            <option *ngFor="let vl of vlevels;" [ngValue]="vl">{{vl}}</option>
-          </select>
-          <p></p>
-          <label>Threshold</label>
-          <input #inThreshold="ngModel" [(ngModel)]="threshold" class="form-control" min="0" required step="0.01"
-                 type="number">
-          <p *ngIf="inThreshold.errors" class="alert alert-danger invalid">invalid threshold value</p>
-          <p></p>
-          <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
-        </ng-template>
+      <div *ngIf="study['zone'].length != 0; else emptyZone">
+        <div class="form-group">
+          <label for="vlId">Voltage level</label>
+          <div *ngIf="vlevels.length == 0; else vlSelContent">....</div>
+          <ng-template #vlSelContent>
+            <select [(ngModel)]="vlId" class="form-control" id="vlId">
+              <option *ngFor="let vl of vlevels;" [ngValue]="vl">{{vl}}</option>
+            </select>
+            <p></p>
+            <label>Threshold</label>
+            <input #inThreshold="ngModel" [(ngModel)]="threshold" class="form-control" min="0" required step="0.01"
+                   type="number">
+            <p *ngIf="inThreshold.errors" class="alert alert-danger invalid">invalid threshold value</p>
+            <p></p>
+            <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
+          </ng-template>
+        </div>
       </div>
+      <ng-template #emptyZone>
+        <p class="alert alert-warning">Zone empty! Please add one or more substations to study {{study['studyName']}}.</p>
+      </ng-template>
       <div *ngIf="showSpinner === true">
         <div class="container">
           <div class="row">
