@@ -147,7 +147,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
             latLng, {
               icon: icon({
                 iconSize: [30, 30],
-                iconUrl: 'assets/substation.png'
+                iconUrl: feature.properties.isDifferent ? 'assets/substation_red.png' : 'assets/substation_blue.png'
               }),
               title: feature.properties.id
             });
@@ -198,17 +198,23 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       let popupContent = "<p>no data available</p>";
 
       if (feature.properties && feature.properties.id) {
-        popupContent = "<p><b>substation:</b> <u>" + feature.properties.id + "</u></p>";
+        popupContent = "<p><b>substation:</b> <u>";
+        if (feature.properties.isDifferent) {
+          popupContent += "<span style='color:red'>";
+        } else {
+          popupContent += "<span style='color:blue'>";
+        }
+          popupContent += feature.properties.id + "</span></u></p>";
         if (feature.properties.vlevels) {
           popupContent += "<b>voltage levels:</b>";
           popupContent += "<table class=\"table table-bordered table-sm\">";
           feature.properties.vlevels.forEach(function (vlevel) {
             if (vlevel['isDifferent'] === "true") {
-              popupContent += "<tr><td rowspan='2'><u>" + vlevel['id'] +
-                "<u></td><td><b>delta minV</b></td><td>" + vlevel['minVDelta'] + "</td></tr>";
+              popupContent += "<tr><td rowspan='2'><span style='color:red'>" + vlevel['id'] +
+                "</span></td><td><b>delta minV</b></td><td>" + vlevel['minVDelta'] + "</td></tr>";
               popupContent += "<tr><td><b>delta maxV</b></td><td>" + vlevel['maxVDelta'] + "</td></tr>";
             } else {
-              popupContent += "<tr><td><u>" + vlevel['id'] + "</u></td><td colspan='2'>no differences</td></tr>";
+              popupContent += "<tr><td><span style='color:blue'>" + vlevel['id'] + "</span></td><td colspan='2'>no differences</td></tr>";
             }
           });
           popupContent += "</table>";
