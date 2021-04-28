@@ -13,6 +13,7 @@ import {
   control,
   Control,
   FeatureGroup,
+  GeoJSON,
   geoJSON,
   icon,
   latLng,
@@ -136,64 +137,92 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       this.controlLayers.removeLayer(this.linesSimpleViewLayer);
     }
 
-    this.diffstudyService.getGeoJsons(studyName, threshold).subscribe(resGeo => {
-      let subsLayer = JSON.parse(resGeo['layers'][0]);
-      let linesDetailedLayer = JSON.parse(resGeo['layers'][1]);
-      let linesSimpleLayer = JSON.parse(resGeo['layers'][2]);
+    this.diffstudyService.getGeoJsons(studyName, threshold).subscribe(resGeoJsons => {
+      let layers = resGeoJsons['layers'];
 
-      this.substationsLayer = geoJSON(subsLayer, {
-        pointToLayer: function (feature, latLng): Layer {
-          return marker(
-            latLng, {
-              icon: icon({
-                iconSize: [30, 30],
-                iconUrl: feature.properties.isDifferent ? 'assets/substation_red.png' : 'assets/substation_blue.png'
-              }),
-              title: feature.properties.id
-            });
-        },
-        onEachFeature: this.getOnEachFeatureSubs()
-      });
-      this.substationsLayer.addTo(this.featureGroup);
+      for (let i = 0; i < layers.length; i++) {
+        let layerName = layers[i].name;
+        let layerData = JSON.parse(layers[i].data);
 
-      //adapt map size to the bounding box delimited by the substation set
-      if (this.featureGroup.getBounds().isValid()) {
-        this.map.fitBounds(this.featureGroup.getBounds(), {
-          padding: point(48, 48),
-          animate: true
-        });
+        // console.log(layerName);
+        // console.log(layerData.features.length);
+        //   no data when layerData.features.length == 0
+
+        switch (layerName) {
+          case "SUBS":
+            this.substationsLayer = DiffstudyZonecompareComponent.createSubsOverlay(layerData);
+
+            //add this layer to the map, to have it displayed by default
+            this.substationsLayer.addTo(this.featureGroup);
+
+            // adapt map size to the bounding box delimited by the substation set
+            if (this.featureGroup.getBounds().isValid()) {
+              this.map.fitBounds(this.featureGroup.getBounds(), {
+                padding: point(48, 48),
+                animate: true
+              });
+            }
+
+            //add layer to the controls, so it can be checked and displayed
+            this.controlLayers.addOverlay(this.substationsLayer, "Substations");
+            break;
+
+          case "LINES":
+            this.linesLayer = DiffstudyZonecompareComponent.createLinesOverlay(layerData);
+
+            //add this layer to the map, to have it displayed by default
+            this.linesLayer.addTo(this.featureGroup);
+
+            //add layer to the controls, so it can be checked and displayed
+            this.controlLayers.addOverlay(this.linesLayer, "Lines (detailed view)");
+            break;
+
+          case "LINES-SIMPLE":
+            this.linesSimpleViewLayer = DiffstudyZonecompareComponent.createLinesOverlay(layerData);
+
+            //do not add this layer to the map right now, so it is not displayed by default
+            //this.linesLayer.addTo(this.featureGroup);
+
+            //add layer to the controls, so it can be checked and displayed
+            this.controlLayers.addOverlay(this.linesSimpleViewLayer, "Lines (simple view)");
+            break;
+
+          default:
+            console.log("unknown layer with name : " + layerName);
+        }
       }
-
-      this.controlLayers.addOverlay(this.substationsLayer, "Substations");
-
-
-      this.linesLayer = geoJSON(linesDetailedLayer, {
-        style: function (feature) {
-          return feature.properties && feature.properties.style;
-        },
-        onEachFeature: this.getOnEachFeatureLines()
-      });
-      this.linesLayer.addTo(this.featureGroup);
-      this.controlLayers.addOverlay(this.linesLayer, "Lines (detailed view)");
-
-
-      this.linesSimpleViewLayer = geoJSON(linesSimpleLayer, {
-        style: function (feature) {
-          return feature.properties && feature.properties.style;
-        },
-        onEachFeature: this.getOnEachFeatureLines()
-      });
-      //do not add this layer to the map right now, so it is not displayed by default
-      //this.linesLayer.addTo(this.featureGroup);
-      //add it to the controls, so it can be checked and displayed
-      this.controlLayers.addOverlay(this.linesSimpleViewLayer, "Lines (simple view)");
 
       this.showSpinner = false;
     });
 
   }
 
-  private getOnEachFeatureSubs() {
+  private static createSubsOverlay(data) : GeoJSON {
+    return geoJSON(data, {
+      pointToLayer: function (feature, latLng): Layer {
+        return marker(
+          latLng, {
+            icon: icon({
+              iconSize: [30, 30],
+              iconUrl: feature.properties.isDifferent ? 'assets/substation_red.png' : 'assets/substation_blue.png'
+            }),
+            title: feature.properties.id
+          });
+      },
+      onEachFeature: DiffstudyZonecompareComponent.getOnEachFeatureSubs()
+    });
+  }
+
+  private static createLinesOverlay(data) : GeoJSON {
+    return geoJSON(data, {
+      style: function (feature) {
+        return feature.properties && feature.properties.style;
+      },
+      onEachFeature: DiffstudyZonecompareComponent.getOnEachFeatureLines()
+    });
+  }
+
+  private static getOnEachFeatureSubs() {
     return function (feature, layer) {
       let popupContent = "<p>no data available</p>";
 
@@ -224,7 +253,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     };
   }
 
-  private getOnEachFeatureLines() {
+  private static getOnEachFeatureLines() {
     return function (feature, layer) {
       let popupContent = "<p>no data available</p>";
 

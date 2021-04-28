@@ -49,7 +49,7 @@ export class DiffstudyService {
     return this.http.get(`${this.baseUrl}/getsubscoords?diffStudyName=${name}`);
   }
 
-  getGeoJsons(name: string, threshold: number): Observable<any> {
+  getGeoJsons(name: string, threshold: number): Observable<Object> {
     return this.http.get(`${this.baseUrl}/getgeojsons?diffStudyName=${name}&threshold=${threshold}`);
   }
 
