@@ -14,3 +14,32 @@
     padding-right: 10px;
     font-weight: 600;
 }
+
+
+/* leaflet related section: start */
+.subs-popup .leaflet-popup-content-wrapper {
+  background: #f0f0f0;
+}
+
+.subs-popup .different {
+  color: #ff0000;
+}
+
+.subs-popup .same {
+  color: #0000ff;
+}
+
+.lines-popup .leaflet-popup-content-wrapper {
+  background: #f2f2f2;
+}
+
+.lines-popup .different {
+  color: #ff0000;
+}
+
+.lines-popup .same {
+  color: #0000ff;
+}
+
+
+/* leaflet related section: end */

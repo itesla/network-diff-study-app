@@ -210,29 +210,32 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       let popupContent = "<p>no data available</p>";
 
       if (feature.properties && feature.properties.id) {
-        popupContent = "<p><b>substation:</b> <u>";
+        popupContent = "<p><b>substation:</b> ";
         if (feature.properties.isDifferent) {
-          popupContent += "<span style='color:red'>";
+          popupContent += "<span class='different'>";
         } else {
-          popupContent += "<span style='color:blue'>";
+          popupContent += "<span class='same'>";
         }
-          popupContent += feature.properties.id + "</span></u></p>";
+          popupContent += feature.properties.id + "</span></p>";
         if (feature.properties.vlevels) {
           popupContent += "<b>voltage levels:</b>";
           popupContent += "<table class=\"table table-bordered table-sm\">";
           feature.properties.vlevels.forEach(function (vlevel) {
             if (vlevel['isDifferent'] === "true") {
-              popupContent += "<tr><td rowspan='2'><span style='color:red'>" + vlevel['id'] +
+              popupContent += "<tr><td rowspan='2'><span class='different'>" + vlevel['id'] +
                 "</span></td><td><b>delta minV</b></td><td>" + vlevel['minVDelta'] + "</td></tr>";
               popupContent += "<tr><td><b>delta maxV</b></td><td>" + vlevel['maxVDelta'] + "</td></tr>";
             } else {
-              popupContent += "<tr><td><span style='color:blue'>" + vlevel['id'] + "</span></td><td colspan='2'>no differences</td></tr>";
+              popupContent += "<tr><td><span class='same'>" + vlevel['id'] + "</span></td><td colspan='2'>no differences</td></tr>";
             }
           });
           popupContent += "</table>";
         }
       }
-      layer.bindPopup(popupContent);
+      //note that to make custom css work, css style declarations must be in global styles.css
+      layer.bindPopup(popupContent, {
+        'className' : 'subs-popup'
+      });
     };
   }
 
@@ -241,8 +244,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       let popupContent = "<p>no data available</p>";
 
       if (feature.properties && feature.properties.id && feature.properties.isDifferent) {
-        popupContent = "<p><b>line:</b> <u>" + feature.properties.id + "</u></p>";
         if (feature.properties.isDifferent === "true") {
+          popupContent = "<p><b>line:</b> <span class='different'>" + feature.properties.id + "</span></p>";
           popupContent += "<p><table class=\"table table-bordered table-sm\">" +
             "<tr><td><b>t1 delta p: </b></td><td>" + feature.properties.t1_dp + "</td></tr>" +
             "<tr><td><b>t1 delta q: </b></td><td>" + feature.properties.t1_dq + "</td></tr>" +
@@ -252,11 +255,15 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
             "<tr><td><b>t2 delta i: </b></td><td>" + feature.properties.t2_di + "</td></tr>" +
             "</table></p>";
         } else {
-          popupContent += "<p>no differences between the two networks   </p>";
+          popupContent = "<p><b>line:</b> <span class='same'>" + feature.properties.id + "</span></p>";
+          popupContent += "<p>no differences between the two networks for this line</p>";
         }
       }
 
-      layer.bindPopup(popupContent);
+      //note that to make custom css work, css style declarations must be in global styles.css
+      layer.bindPopup(popupContent, {
+        'className' : 'lines-popup'
+      });
     };
   }
 }
