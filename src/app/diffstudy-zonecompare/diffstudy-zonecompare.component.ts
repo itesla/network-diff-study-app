@@ -24,7 +24,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   showSpinner: boolean = false;
   alertMessage: string = "Loading, please wait";
 
-  map: L.Map;
+  dmap: L.Map;
 
   overlayFeatureGroup: L.FeatureGroup = new L.FeatureGroup();
   franceCenteredCoords = L.latLng(46.624738528968436, 2.4264306819068198);
@@ -36,9 +36,9 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   }
 
   removeExistingMapData(): void {
-    if (this.map) {
-      this.map.off();
-      this.map.remove();
+    if (this.dmap) {
+      this.dmap.off();
+      this.dmap.remove();
     }
   }
 
@@ -81,17 +81,17 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   ngAfterViewInit(): void {
     this.removeExistingMapData();
 
-    this.map = L.map('map', {
+    this.dmap = L.map('dmap', {
       center: this.franceCenteredCoords,
       zoom: 6,
       attributionControl: true,
       layers:  [this.overlayFeatureGroup]
     });
 
-    let baseMaps = this.addBaseLayers(this.map);
+    let baseMaps = this.addBaseLayers(this.dmap);
 
     this.controlLayers = L.control.layers(baseMaps);
-    this.controlLayers.addTo(this.map);
+    this.controlLayers.addTo(this.dmap);
   }
 
   ngOnInit(): void {
@@ -142,7 +142,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
             // adapt map size to the bounding box delimited by the substation set
             if (substationsLayer.getBounds().isValid()) {
-              this.map.fitBounds(substationsLayer.getBounds(), {
+              this.dmap.fitBounds(substationsLayer.getBounds(), {
                 padding: L.point(48, 48),
                 animate: true
               });
