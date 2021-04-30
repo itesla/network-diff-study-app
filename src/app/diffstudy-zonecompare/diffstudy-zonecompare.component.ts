@@ -40,12 +40,11 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
   map: Map;
 
-  substationsLayer: FeatureGroup;
-  linesLayer: FeatureGroup;
-  linesSimpleViewLayer: FeatureGroup;
-  featureGroup: FeatureGroup = new FeatureGroup();
+  overlayFeatureGroup: FeatureGroup = new FeatureGroup();
   franceCenteredCoords = latLng(46.624738528968436, 2.4264306819068198);
   controlLayers: Control.Layers;
+
+  overlayLayersList = [];
 
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
@@ -100,7 +99,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       center: this.franceCenteredCoords,
       zoom: 6,
       attributionControl: true,
-      layers:  [this.featureGroup]
+      layers:  [this.overlayFeatureGroup]
     });
 
     let baseMaps = this.addBaseLayers(this.map);
@@ -125,18 +124,17 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   populateMap(studyName: string, threshold: number) {
     this.showSpinner = true;
 
-    this.featureGroup.clearLayers();
+    this.overlayFeatureGroup.clearLayers();
 
-    if (this.substationsLayer) {
-      this.controlLayers.removeLayer(this.substationsLayer);
-    }
-    if (this.linesLayer) {
-      this.controlLayers.removeLayer(this.linesLayer);
-    }
-    if (this.linesSimpleViewLayer) {
-      this.controlLayers.removeLayer(this.linesSimpleViewLayer);
-    }
+    //remove the overlay entries from the control box
+    this.overlayLayersList.forEach((item) => {
+      this.controlLayers.removeLayer(item['layer']);
+    });
 
+    //empties the overlay list
+    this.overlayLayersList = [];
+
+    //retrieve the geoJsons
     this.diffstudyService.getGeoJsons(studyName, threshold).subscribe(resGeoJsons => {
       let layers = resGeoJsons['layers'];
 
@@ -150,47 +148,46 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
         switch (layerName) {
           case "SUBS":
-            this.substationsLayer = DiffstudyZonecompareComponent.createSubsOverlay(layerData);
+            let substationsLayer = DiffstudyZonecompareComponent.createSubsOverlay(layerData);
+            this.overlayLayersList.push({"id" : "Substations", "type" : layerName, "layer" : substationsLayer});
 
             //add this layer to the map, to have it displayed by default
-            this.substationsLayer.addTo(this.featureGroup);
+            substationsLayer.addTo(this.overlayFeatureGroup);
 
             // adapt map size to the bounding box delimited by the substation set
-            if (this.featureGroup.getBounds().isValid()) {
-              this.map.fitBounds(this.featureGroup.getBounds(), {
+            if (substationsLayer.getBounds().isValid()) {
+              this.map.fitBounds(substationsLayer.getBounds(), {
                 padding: point(48, 48),
                 animate: true
               });
             }
-
-            //add layer to the controls, so it can be checked and displayed
-            this.controlLayers.addOverlay(this.substationsLayer, "Substations");
             break;
 
           case "LINES":
-            this.linesLayer = DiffstudyZonecompareComponent.createLinesOverlay(layerData);
+            let linesLayer = DiffstudyZonecompareComponent.createLinesOverlay(layerData);
+            this.overlayLayersList.push({"id" : "Lines (detailed view)", "type" : layerName, "layer" : linesLayer});
 
             //add this layer to the map, to have it displayed by default
-            this.linesLayer.addTo(this.featureGroup);
-
-            //add layer to the controls, so it can be checked and displayed
-            this.controlLayers.addOverlay(this.linesLayer, "Lines (detailed view)");
+            linesLayer.addTo(this.overlayFeatureGroup);
             break;
 
           case "LINES-SIMPLE":
-            this.linesSimpleViewLayer = DiffstudyZonecompareComponent.createLinesOverlay(layerData);
+            let linesSimpleViewLayer = DiffstudyZonecompareComponent.createLinesOverlay(layerData);
+            this.overlayLayersList.push({"id" : "Lines (simple view)", "type" : layerName, "layer" : linesSimpleViewLayer});
 
             //do not add this layer to the map right now, so it is not displayed by default
-            //this.linesLayer.addTo(this.featureGroup);
-
-            //add layer to the controls, so it can be checked and displayed
-            this.controlLayers.addOverlay(this.linesSimpleViewLayer, "Lines (simple view)");
+            //linesSimpleViewLayer.addTo(this.featureGroup);
             break;
 
           default:
             console.log("unknown layer with name : " + layerName);
         }
       }
+
+      //add layer to the controls, so it can be checked and displayed
+      this.overlayLayersList.forEach((item) => {
+        this.controlLayers.addOverlay(item['layer'], item['id']);
+      });
 
       this.showSpinner = false;
     });
