@@ -9,21 +9,7 @@ import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
-import {
-  control,
-  Control,
-  FeatureGroup,
-  GeoJSON,
-  geoJSON,
-  icon,
-  latLng,
-  Layer,
-  Map,
-  map,
-  marker,
-  point,
-  tileLayer
-} from 'leaflet';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'comparez',
@@ -38,11 +24,11 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   showSpinner: boolean = false;
   alertMessage: string = "Loading, please wait";
 
-  map: Map;
+  map: L.Map;
 
-  overlayFeatureGroup: FeatureGroup = new FeatureGroup();
-  franceCenteredCoords = latLng(46.624738528968436, 2.4264306819068198);
-  controlLayers: Control.Layers;
+  overlayFeatureGroup: L.FeatureGroup = new L.FeatureGroup();
+  franceCenteredCoords = L.latLng(46.624738528968436, 2.4264306819068198);
+  controlLayers: L.Control.Layers;
 
   overlayLayersList = [];
 
@@ -60,26 +46,26 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     this.removeExistingMapData();
   }
 
-  addBaseLayers(aMap: Map): any {
-    let openStreetTileLayer = tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  addBaseLayers(aMap: L.Map): any {
+    let openStreetTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
         maxZoom: 19,
         detectRetina: true,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       });
 
-    let satelliteTileLayer = tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    let satelliteTileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       {
         maxZoom: 19,
         detectRetina: true,
         attribution: '&copy; <a href="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer">Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community </a> contributors'
       });
 
-    let darkTileLayer = tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+    let darkTileLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
       {
         maxZoom: 19,
         detectRetina: true,
-        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org">OpenMapTiles</a>, &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org">OpenMapTiles</a>, &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
       });
 
     //add the default base layer to the map
@@ -95,7 +81,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   ngAfterViewInit(): void {
     this.removeExistingMapData();
 
-    this.map = map('map', {
+    this.map = L.map('map', {
       center: this.franceCenteredCoords,
       zoom: 6,
       attributionControl: true,
@@ -104,7 +90,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
     let baseMaps = this.addBaseLayers(this.map);
 
-    this.controlLayers = control.layers(baseMaps);
+    this.controlLayers = L.control.layers(baseMaps);
     this.controlLayers.addTo(this.map);
   }
 
@@ -157,7 +143,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
             // adapt map size to the bounding box delimited by the substation set
             if (substationsLayer.getBounds().isValid()) {
               this.map.fitBounds(substationsLayer.getBounds(), {
-                padding: point(48, 48),
+                padding: L.point(48, 48),
                 animate: true
               });
             }
@@ -194,12 +180,12 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
   }
 
-  private static createSubsOverlay(data) : GeoJSON {
-    return geoJSON(data, {
-      pointToLayer: function (feature, latLng): Layer {
-        return marker(
+  private static createSubsOverlay(data) : L.GeoJSON {
+    return L.geoJSON(data, {
+      pointToLayer: function (feature, latLng): L.Layer {
+        return L.marker(
           latLng, {
-            icon: icon({
+            icon: L.icon({
               iconSize: [30, 30],
               iconUrl: feature.properties.isDifferent ? 'assets/substation_red.png' : 'assets/substation_blue.png'
             }),
@@ -210,8 +196,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     });
   }
 
-  private static createLinesOverlay(data) : GeoJSON {
-    return geoJSON(data, {
+  private static createLinesOverlay(data) : L.GeoJSON {
+    return L.geoJSON(data, {
       style: function (feature) {
         return feature.properties && feature.properties.style;
       },
