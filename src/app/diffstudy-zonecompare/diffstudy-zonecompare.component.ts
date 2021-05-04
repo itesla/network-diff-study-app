@@ -121,7 +121,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     this.overlayLayersList = [];
 
     //retrieve the geoJsons
-    this.diffstudyService.getGeoJsons(studyName, threshold).subscribe(resGeoJsons => {
+    this.diffstudyService.getGeoJsons(studyName, threshold, ["SUBS", "LINES", "LINES-SIMPLE"]).subscribe(resGeoJsons => {
       let layers = resGeoJsons['layers'];
 
       for (let i = 0; i < layers.length; i++) {
@@ -247,18 +247,20 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
         if (feature.properties.isDifferent === "true") {
           popupContent = "<p><b>line:</b> <span class='different'>" + feature.properties.id + "</span></p>";
           popupContent += "<p><table class=\"table table-bordered table-sm\">" +
-            "<tr><td><b>t1 delta p: </b></td><td>" + feature.properties.t1_dp + "</td></tr>" +
-            "<tr><td><b>t1 delta q: </b></td><td>" + feature.properties.t1_dq + "</td></tr>" +
-            "<tr><td><b>t1 delta i: </b></td><td>" + feature.properties.t1_di + "</td></tr>" +
-            "<tr><td><b>t2 delta p: </b></td><td>" + feature.properties.t2_dp + "</td></tr>" +
-            "<tr><td><b>t2 delta q: </b></td><td>" + feature.properties.t2_dq + "</td></tr>" +
-            "<tr><td><b>t2 delta i: </b></td><td>" + feature.properties.t2_di + "</td></tr>" +
+            "<tr><td><b>delta P1: </b></td><td>" + feature.properties.t1_dp + "</td></tr>" +
+            "<tr><td><b>delta Q1: </b></td><td>" + feature.properties.t1_dq + "</td></tr>" +
+            "<tr><td><b>delta I1: </b></td><td>" + feature.properties.t1_di + "</td></tr>" +
+            "<tr><td><b>delta P2: </b></td><td>" + feature.properties.t2_dp + "</td></tr>" +
+            "<tr><td><b>delta Q2: </b></td><td>" + feature.properties.t2_dq + "</td></tr>" +
+            "<tr><td><b>delta I2: </b></td><td>" + feature.properties.t2_di + "</td></tr>" +
             "</table></p>";
         } else {
           popupContent = "<p><b>line:</b> <span class='same'>" + feature.properties.id + "</span></p>";
           popupContent += "<p>no differences between the two networks for this line</p>";
         }
       }
+      // display line-id tip
+      layer.bindTooltip(feature.properties.id)
 
       //note that to make custom css work, css style declarations must be in global styles.css
       layer.bindPopup(popupContent, {
