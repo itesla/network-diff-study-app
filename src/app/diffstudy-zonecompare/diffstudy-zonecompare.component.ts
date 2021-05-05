@@ -260,7 +260,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
         }
       }
       // display line-id tip
-      layer.bindTooltip(feature.properties.id)
+      layer.bindTooltip(feature.properties.id, {sticky: true})
 
       //note that to make custom css work, css style declarations must be in global styles.css
       layer.bindPopup(popupContent, {
