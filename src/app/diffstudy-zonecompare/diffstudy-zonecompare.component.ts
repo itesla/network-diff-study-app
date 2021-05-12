@@ -223,10 +223,10 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
           feature.properties.vlevels.forEach(function (vlevel) {
             if (vlevel['isDifferent'] === "true") {
               popupContent += "<tr><td rowspan='2'><span class='different'>" + vlevel['id'] +
-                "</span></td><td><b>delta minV</b></td><td>" + vlevel['minVDelta'] + "</td></tr>";
-              popupContent += "<tr><td><b>delta maxV</b></td><td>" + vlevel['maxVDelta'] + "</td></tr>";
+                "</span></td><td><b>delta minV</b></td><td>" + vlevel['minVDelta'] + "</td><td>(" + vlevel['minVDeltaPerc'] + ")</td></tr>";
+              popupContent += "<tr><td><b>delta maxV</b></td><td>" + vlevel['maxVDelta'] + "</td><td>(" + vlevel['maxVDeltaPerc'] + ")</td></tr>";
             } else {
-              popupContent += "<tr><td><span class='same'>" + vlevel['id'] + "</span></td><td colspan='2'>no differences</td></tr>";
+              popupContent += "<tr><td><span class='same'>" + vlevel['id'] + "</span></td><td colspan='3'>no differences</td></tr>";
             }
           });
           popupContent += "</table>";
@@ -234,7 +234,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       }
       //note that to make custom css work, css style declarations must be in global styles.css
       layer.bindPopup(popupContent, {
-        'className' : 'subs-popup'
+        'className' : 'subs-popup',
+        'maxWidth' : 560
       });
     };
   }
@@ -247,12 +248,12 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
         if (feature.properties.isDifferent === "true") {
           popupContent = "<p><b>line:</b> <span class='different'>" + feature.properties.id + "</span></p>";
           popupContent += "<p><table class=\"table table-bordered table-sm\">" +
-            "<tr><td><b>delta P1: </b></td><td>" + feature.properties.t1_dp + "</td></tr>" +
-            "<tr><td><b>delta Q1: </b></td><td>" + feature.properties.t1_dq + "</td></tr>" +
-            "<tr><td><b>delta I1: </b></td><td>" + feature.properties.t1_di + "</td></tr>" +
-            "<tr><td><b>delta P2: </b></td><td>" + feature.properties.t2_dp + "</td></tr>" +
-            "<tr><td><b>delta Q2: </b></td><td>" + feature.properties.t2_dq + "</td></tr>" +
-            "<tr><td><b>delta I2: </b></td><td>" + feature.properties.t2_di + "</td></tr>" +
+            "<tr><td><b>delta P1: </b></td><td>" + feature.properties.t1_dp + "</td><td>(" + feature.properties.t1_dp_perc + ")</td></tr>" +
+            "<tr><td><b>delta Q1: </b></td><td>" + feature.properties.t1_dq + "</td><td>(" + feature.properties.t1_dq_perc + ")</td></tr>" +
+            "<tr><td><b>delta I1: </b></td><td>" + feature.properties.t1_di + "</td><td>(" + feature.properties.t1_di_perc + ")</td></tr>" +
+            "<tr><td><b>delta P2: </b></td><td>" + feature.properties.t2_dp + "</td><td>(" + feature.properties.t2_dp_perc + ")</td></tr>" +
+            "<tr><td><b>delta Q2: </b></td><td>" + feature.properties.t2_dq + "</td><td>(" + feature.properties.t2_dq_perc + ")</td></tr>" +
+            "<tr><td><b>delta I2: </b></td><td>" + feature.properties.t2_di + "</td><td>(" + feature.properties.t2_di_perc + ")</td></tr>" +
             "</table></p>";
         } else {
           popupContent = "<p><b>line:</b> <span class='same'>" + feature.properties.id + "</span></p>";
@@ -264,7 +265,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
       //note that to make custom css work, css style declarations must be in global styles.css
       layer.bindPopup(popupContent, {
-        'className' : 'lines-popup'
+        'className' : 'lines-popup',
+        'maxWidth' : 560
       });
     };
   }
