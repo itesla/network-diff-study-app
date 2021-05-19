@@ -92,6 +92,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
     this.controlLayers = L.control.layers(baseMaps);
     this.controlLayers.addTo(this.dmap);
+
+    this.addLegend(this.dmap);
   }
 
   ngOnInit(): void {
@@ -269,5 +271,27 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
         'maxWidth' : 560
       });
     };
+  }
+
+  private addLegend(dmap: L.Map) {
+    function getColor(d) {
+      return d === 'Same'  ? "#0000ff" :
+        d === 'Different'  ? "#ff0000" :
+              "#ff00ff";
+    }
+
+    let legend = new L.Control({position: 'bottomleft'});
+    legend.onAdd = function (map) {
+      let legendDiv = L.DomUtil.create('div', 'legenda-info legenda');
+      let label = ['<strong>Diff results</strong>'];
+      let cats = ['Same','Different'];
+
+      for (let i = 0; i < cats.length; i++) {
+        legendDiv.innerHTML += label.push('<i style="background:' + getColor(cats[i]) + '"></i> ' + (cats[i] ? cats[i] : '+'));
+      }
+      legendDiv.innerHTML = label.join('<br>');
+      return legendDiv;
+    };
+    legend.addTo(dmap);
   }
 }
