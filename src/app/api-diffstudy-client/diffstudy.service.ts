@@ -49,12 +49,12 @@ export class DiffstudyService {
     return this.http.get(`${this.baseUrl}/getsubscoords?diffStudyName=${name}`);
   }
 
-  getGeoJsons(name: string, threshold: number, layersIds: string[]): Observable<Object> {
+  getGeoJsons(name: string, threshold: number, voltageThreshold: number, layersIds: string[]): Observable<Object> {
     let layersParam='';
     layersIds.forEach((x) => {
       layersParam += `&layersIds=${x}`;
     });
-    return this.http.get(`${this.baseUrl}/getgeojsons?diffStudyName=${name}&threshold=${threshold}${layersParam}`);
+    return this.http.get(`${this.baseUrl}/getgeojsons?diffStudyName=${name}&threshold=${threshold}&voltageThreshold=${voltageThreshold}${layersParam}`);
   }
 
   setDiffstudyZone(studyName: string, zone: string[]): Observable<Object> {

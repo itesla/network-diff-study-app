@@ -17,6 +17,7 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() pId: string;
   @Input() pType: string;
   @Input() threshold: number;
+  @Input() voltageThreshold: number;
 
   svgPanZoom: any;
 
@@ -27,7 +28,8 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
     if ((this.network1 === undefined || this.network1.length == 0) || (this.network2 === undefined || this.network2.length == 0)
       || (this.pId === undefined || this.pId.length == 0)
       || (this.pType === undefined || this.pType.length == 0)
-      || (this.threshold === undefined)) {
+      || (this.threshold === undefined)
+      || (this.voltageThreshold === undefined)) {
       return false;
     } else {
       return true;
@@ -44,8 +46,8 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
       this.dataContainer.nativeElement.innerHTML = "Loading ..."
 
       let compServiceType = (this.pType === 'vl') ? 'vl' : 'sub';
-      let serviceUrl = `http://localhost:6007/v1/networks/${encodeURIComponent(String(this.network1))}/svgdiff/${encodeURIComponent(String(this.network2))}/${compServiceType}/${encodeURIComponent(String(this.pId))}/${encodeURIComponent(String(this.threshold))}`;
-      //console.log("serviceUrl: " + serviceUrl);
+      let serviceUrl = `http://localhost:6007/v1/networks/${encodeURIComponent(String(this.network1))}/svgdiff/${encodeURIComponent(String(this.network2))}/${compServiceType}/${encodeURIComponent(String(this.pId))}/${encodeURIComponent(String(this.threshold))}/${encodeURIComponent(String(this.voltageThreshold))}`;
+      console.log("serviceUrl: " + serviceUrl);
 
       this.httpClient.get(serviceUrl, {
         headers: new HttpHeaders({

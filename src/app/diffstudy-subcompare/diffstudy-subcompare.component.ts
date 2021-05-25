@@ -38,6 +38,10 @@ export class DiffstudySubcompareComponent implements OnInit {
   threshold: number;
   thresholdS: number;
 
+  voltageThreshold: number;
+  voltageThresholdS: number;
+
+
   showSpinner: boolean = false;
 
   alertMessage: string = "Loading, please wait";
@@ -54,6 +58,9 @@ export class DiffstudySubcompareComponent implements OnInit {
 
     this.threshold = 0.0;
     this.thresholdS = this.threshold;
+
+    this.voltageThreshold = 0.0;
+    this.voltageThresholdS = this.voltageThreshold;
 
     this.showSpinner = false;
   }
@@ -97,6 +104,7 @@ export class DiffstudySubcompareComponent implements OnInit {
     this.showDiagram = true;
 
     this.thresholdS = Math.abs(this.threshold);
+    this.voltageThresholdS = Math.abs(this.voltageThreshold);
 
     this.showSpinner = true;
 
@@ -104,7 +112,7 @@ export class DiffstudySubcompareComponent implements OnInit {
       let network1Uuid = diffStudyRes['network1Uuid'];
       let network2Uuid = diffStudyRes['network2Uuid'];
 
-      this.apiService.diffSubstationUsingGET(this.thresholdS, network1Uuid, network2Uuid, this.subId)
+      this.apiService.diffSubstationUsingGET(this.thresholdS, network1Uuid, network2Uuid, this.subId, this.voltageThreshold)
         .subscribe(diffResult => {
           //set global status
           this.network1 = network1Uuid;

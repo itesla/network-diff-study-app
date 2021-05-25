@@ -21,6 +21,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   studies: Diffstudy[];
   study: Diffstudy;
   threshold: number;
+  voltageThreshold: number;
   showSpinner: boolean = false;
   alertMessage: string = "Loading, please wait";
 
@@ -101,15 +102,16 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       this.studies = studiesListRes;
     });
     this.threshold = 0.0;
+    this.voltageThreshold = 0.0;
     this.showSpinner = false;
   }
 
   networkDiff() {
     this.showSpinner = false;
-    this.populateMap(this.study['studyName'], Math.abs(this.threshold));
+    this.populateMap(this.study['studyName'], Math.abs(this.threshold), Math.abs(this.voltageThreshold));
   }
 
-  populateMap(studyName: string, threshold: number) {
+  populateMap(studyName: string, threshold: number, voltageThreshold: number) {
     this.showSpinner = true;
 
     this.overlayFeatureGroup.clearLayers();
@@ -123,7 +125,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     this.overlayLayersList = [];
 
     //retrieve the geoJsons
-    this.diffstudyService.getGeoJsons(studyName, threshold, ["SUBS", "LINES", "LINES-SIMPLE"]).subscribe(resGeoJsons => {
+    this.diffstudyService.getGeoJsons(studyName, threshold, voltageThreshold, ["SUBS", "LINES", "LINES-SIMPLE"]).subscribe(resGeoJsons => {
       let layers = resGeoJsons['layers'];
 
       for (let i = 0; i < layers.length; i++) {

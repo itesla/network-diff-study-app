@@ -16,9 +16,13 @@
               <option *ngFor="let sub of subs;" [ngValue]="sub">{{sub}}</option>
             </select>
             <p></p>
-            <label>Threshold</label>
+            <label>Current threshold</label>
             <input #inThreshold="ngModel" [(ngModel)]="threshold" class="form-control" min="0" required step="0.01" type="number">
             <p *ngIf="inThreshold.errors" class="alert alert-danger invalid">invalid threshold value</p>
+            <p></p>
+            <label>Voltage threshold</label>
+            <input #inVoltageThreshold="ngModel" [(ngModel)]="voltageThreshold" class="form-control" min="0" required step="0.01" type="number">
+            <p *ngIf="inVoltageThreshold.errors" class="alert alert-danger invalid">invalid threshold value</p>
             <p></p>
             <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
           </ng-template>
@@ -47,10 +51,10 @@
   <div *ngIf="showDiagram == true">
     <hr/>
     <span class="label">{{network1Names}}</span>
-    <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="subIds" [threshold]="thresholdS" pType="sub" sldId="svg1"></app-sld-diff>
+    <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg1"></app-sld-diff>
     <p></p>
     <span class="label">{{network2Names}}</span>
-    <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="subIds" [threshold]="thresholdS" pType="sub" sldId="svg2"></app-sld-diff>
+    <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg2"></app-sld-diff>
   </div>
 
   <div *ngIf="diffResult">
