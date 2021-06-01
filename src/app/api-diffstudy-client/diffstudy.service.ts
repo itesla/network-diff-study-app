@@ -14,8 +14,7 @@ import {NewDiffstudy} from "./newdiffstudy";
   providedIn: 'root'
 })
 export class DiffstudyService {
-  private baseUrl = 'http://localhost:6008/v1/diff-studies';
-
+  private baseUrl = '/v1/diff-studies';
 
   constructor(private http: HttpClient) { }
 

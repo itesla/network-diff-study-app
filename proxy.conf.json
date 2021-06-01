@@ -1,0 +1,10 @@
+{
+  "/v1/diff-studies": {
+     "target": "http://localhost:6008",
+     "secure": false
+  },
+  "/v1/networks": {
+     "target": "http://localhost:6007",
+     "secure": false
+  }
+}
