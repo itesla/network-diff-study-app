@@ -44,7 +44,7 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
       this.dataContainer.nativeElement.innerHTML = "Loading ..."
 
       let compServiceType = (this.pType === 'vl') ? 'vl' : 'sub';
-      let serviceUrl = `http://localhost:6007/v1/networks/${encodeURIComponent(String(this.network1))}/svgdiff/${encodeURIComponent(String(this.network2))}/${compServiceType}/${encodeURIComponent(String(this.pId))}/${encodeURIComponent(String(this.threshold))}`;
+      let serviceUrl = `/v1/networks/${encodeURIComponent(String(this.network1))}/svgdiff/${encodeURIComponent(String(this.network2))}/${compServiceType}/${encodeURIComponent(String(this.pId))}/${encodeURIComponent(String(this.threshold))}`;
       //console.log("serviceUrl: " + serviceUrl);
 
       this.httpClient.get(serviceUrl, {

@@ -29,6 +29,7 @@ import {EditDiffStudyComponent} from "./diffstudy-edit/edit-diffstudy.component"
 import { DiffstudySubcompareComponent } from './diffstudy-subcompare/diffstudy-subcompare.component';
 import { SldDiffComponent } from './sld-diff/sld-diff.component';
 import { DiffstudyZonecompareComponent } from './diffstudy-zonecompare/diffstudy-zonecompare.component';
+import {BASE_PATH} from './api-diff-client/variables';
 
 
 @NgModule({
@@ -54,7 +55,9 @@ import { DiffstudyZonecompareComponent } from './diffstudy-zonecompare/diffstudy
         TabViewModule,
         LeafletModule
     ],
-  providers: [],
+  providers: [
+    { provide: BASE_PATH, useValue: "" }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

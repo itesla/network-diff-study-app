@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CaseService {
-  private baseUrl = 'http://localhost:6008/v1/diff-studies';
+  private baseUrl = '/v1/diff-studies';
 
 
   constructor(private http: HttpClient) { }

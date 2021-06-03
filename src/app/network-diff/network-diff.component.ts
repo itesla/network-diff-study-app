@@ -52,7 +52,7 @@ export class NetworkDiffComponent implements OnInit {
       || (this.vlId === undefined || this.vlId.length == 0)) {
       return "";
     } else {
-      let url = 'http://localhost:6007/v1/networks/' + network1Id + '/svgdiff/' + network2Id + '/vl/' + this.vlId;
+      let url = '/v1/networks/' + network1Id + '/svgdiff/' + network2Id + '/vl/' + this.vlId;
       return url;
     }
   }
