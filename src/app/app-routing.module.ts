@@ -15,6 +15,7 @@ import {NetworkDiffComponent} from "./network-diff/network-diff.component";
 import {EditDiffStudyComponent} from "./diffstudy-edit/edit-diffstudy.component";
 import {DiffstudySubcompareComponent} from './diffstudy-subcompare/diffstudy-subcompare.component';
 import {DiffstudyZonecompareComponent} from "./diffstudy-zonecompare/diffstudy-zonecompare.component";
+import {PreferencesComponent} from "./preferences/preferences.component";
 
 const routes: Routes = [
   {path: '', redirectTo: 'diffstudy', pathMatch: 'full'},
@@ -25,7 +26,8 @@ const routes: Routes = [
   {path: 'comparesub', component: DiffstudySubcompareComponent},
   {path: 'comparez', component: DiffstudyZonecompareComponent},
   {path: 'network-diff', component: NetworkDiffComponent},
-  {path: 'editStudy/:id', component: EditDiffStudyComponent}
+  {path: 'editStudy/:id', component: EditDiffStudyComponent},
+  {path: 'preferences', component: PreferencesComponent}
 ];
 
 @NgModule({

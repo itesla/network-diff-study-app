@@ -9,6 +9,7 @@ import {Component, OnInit} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
+import {PreferencesComponent} from "../preferences/preferences.component";
 @Component({
   selector: 'comparevl',
   templateUrl: './diffstudy-vlcompare.component.html',
@@ -41,12 +42,19 @@ export class DiffstudyVlcompareComponent implements OnInit {
 
   showSpinner: boolean = false;
 
+  thTable: Object;
+
   alertMessage: string = "Loading, please wait";
 
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
   ngOnInit(): void {
+    this.thTable = {
+      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
+    }
+    console.log("levels " + JSON.stringify(this.thTable));
+
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
@@ -59,6 +67,36 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.voltageThresholdS = this.voltageThreshold;
 
     this.showSpinner = false;
+
+
+    this.thTable = {
+      "levels": [{
+        "id": "first",
+        "v": 20,
+        "i": 20,
+        "c": "green"
+      }, {
+        "id": "second",
+        "v": 40,
+        "i": 40,
+        "c": "yellow"
+      }, {
+        "id": "third",
+        "v": 60,
+        "i": 60,
+        "c": "orange"
+      }, {
+        "id": "fourth",
+        "v": 80,
+        "i": 80,
+        "c": "magenta"
+      }, {
+        "id": "fifth",
+        "v": 100,
+        "i": 100,
+        "c": "red"
+      }]
+    };
   }
 
   onChangeDiffStudy(study) {

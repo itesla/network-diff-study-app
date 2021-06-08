@@ -51,10 +51,10 @@
   <div *ngIf="showDiagram == true">
     <hr/>
     <span class="label">{{network1Names}}</span>
-    <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg1"></app-sld-diff>
+    <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg1" [thTable]="thTable"></app-sld-diff>
     <p></p>
     <span class="label">{{network2Names}}</span>
-    <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg2"></app-sld-diff>
+    <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg2" [thTable]="thTable"></app-sld-diff>
   </div>
 
   <div *ngIf="diffResult">

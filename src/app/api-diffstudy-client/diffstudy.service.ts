@@ -6,7 +6,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {NewDiffstudy} from "./newdiffstudy";
 
@@ -48,12 +48,13 @@ export class DiffstudyService {
     return this.http.get(`${this.baseUrl}/getsubscoords?diffStudyName=${name}`);
   }
 
-  getGeoJsons(name: string, threshold: number, voltageThreshold: number, layersIds: string[]): Observable<Object> {
+  getGeoJsons(name: string, threshold: number, voltageThreshold: number, layersIds: string[], thTable: Object): Observable<Object> {
     let layersParam='';
     layersIds.forEach((x) => {
       layersParam += `&layersIds=${x}`;
     });
-    return this.http.get(`${this.baseUrl}/getgeojsons?diffStudyName=${name}&threshold=${threshold}&voltageThreshold=${voltageThreshold}${layersParam}`);
+    let levels = encodeURIComponent(JSON.stringify(thTable));
+    return this.http.get(`${this.baseUrl}/getgeojsons?diffStudyName=${name}&threshold=${threshold}&voltageThreshold=${voltageThreshold}&levels=${levels}${layersParam}`);
   }
 
   setDiffstudyZone(studyName: string, zone: string[]): Observable<Object> {

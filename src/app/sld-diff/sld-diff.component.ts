@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild, ViewChildren} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import * as SvgPanZoom from 'svg-pan-zoom';
 
 
@@ -18,6 +18,7 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() pType: string;
   @Input() threshold: number;
   @Input() voltageThreshold: number;
+  @Input() thTable: Object;
 
   svgPanZoom: any;
 
@@ -47,9 +48,11 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
 
       let compServiceType = (this.pType === 'vl') ? 'vl' : 'sub';
       let serviceUrl = `/v1/networks/${encodeURIComponent(String(this.network1))}/svgdiff/${encodeURIComponent(String(this.network2))}/${compServiceType}/${encodeURIComponent(String(this.pId))}/${encodeURIComponent(String(this.threshold))}/${encodeURIComponent(String(this.voltageThreshold))}`;
+      let httpParams = new HttpParams().set("levels", encodeURIComponent(JSON.stringify(this.thTable)));
       console.log("serviceUrl: " + serviceUrl);
 
       this.httpClient.get(serviceUrl, {
+        params: httpParams,
         headers: new HttpHeaders({
           'Content-Type': 'image/svg+xml'
         }),

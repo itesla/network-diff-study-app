@@ -55,11 +55,11 @@
       <hr/>
       <span class="label">{{network1Names}}</span>
       <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="vlIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="vl"
-                    sldId="svgVl1"></app-sld-diff>
+                    sldId="svgVl1" [thTable]="thTable"></app-sld-diff>
       <p></p>
       <span class="label">{{network2Names}}</span>
       <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="vl"
-                    sldId="svgVl2"></app-sld-diff>
+                    sldId="svgVl2" [thTable]="thTable"></app-sld-diff>
     </div>
 
     <div *ngIf="diffResult">

@@ -1,0 +1,50 @@
+<div>
+  <div class="sidebar">
+    <p></p>
+    <h3 class="text-center font-weight-bold text-uppercase py-4">Levels list</h3>
+    <!--
+            <div id="table" class="table-editable">
+    -->
+    <!--      <span class="table-add float-right mb-3 mr-2">
+            <button type="button" mdbBtn color="blue" rounded="true" size="sm" class="my-0" (click)="add()">Add</button>
+          </span>-->
+    <table class="table text-center">
+      <tr>
+        <th class="text-center pt-lg-5">Id</th>
+        <th class="text-center pt-lg-5">I (%)</th>
+        <th class="text-center pt-lg-5">V (%)</th>
+        <th class="text-center pt-lg-5">Color</th>
+        <!--<th class="text-center">Action</th>-->
+      </tr>
+      <tr *ngFor="let level of levelList; let idx = index">
+        <td class="pt-lg-5">
+          <span (keyup)="changeValue(idx, 'id', $event)" (blur)="updateList(idx, 'id', $event)"
+                contenteditable="false">{{level.id}}</span>
+        </td>
+        <td class="pt-lg-5">
+          <span contenteditable="true" (keyup)="changeValue(idx, 'i', $event)"
+                (blur)="updateList(idx, 'i', $event)">{{level.i}}</span>
+        </td>
+        <td class="pt-lg-5">
+          <span contenteditable="true" (keyup)="changeValue(idx, 'v', $event)"
+                (blur)="updateList(idx, 'v', $event)">{{level.v}}</span>
+        </td>
+
+        <td class="pt-lg-5">
+          <span style="color: {{level.c}}" contenteditable="true" (keyup)="changeValue(idx, 'c', $event)"
+                (blur)="updateList(idx, 'c', $event)">{{level.c}}</span>
+        </td>
+        <!--          <td class="pt-lg-5">
+                    <span class="table-remove">
+                      <button type="button" mdbBtn color="danger" rounded="true" size="sm" class="my-0" (click)="remove(idx)">Remove</button>
+                    </span>
+                  </td>-->
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+
+
+

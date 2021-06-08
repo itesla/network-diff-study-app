@@ -9,6 +9,7 @@ import {Component, OnInit} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
+import {PreferencesComponent} from "../preferences/preferences.component";
 
 @Component({
   selector: 'comparevl',
@@ -44,12 +45,19 @@ export class DiffstudySubcompareComponent implements OnInit {
 
   showSpinner: boolean = false;
 
+  thTable: Object;
+
   alertMessage: string = "Loading, please wait";
 
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
 
   ngOnInit(): void {
+    this.thTable = {
+      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
+    }
+    console.log("levels " + JSON.stringify(this.thTable));
+
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });

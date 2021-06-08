@@ -10,6 +10,7 @@ import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
 import * as L from 'leaflet';
+import {PreferencesComponent} from "../preferences/preferences.component";
 
 @Component({
   selector: 'comparez',
@@ -32,6 +33,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   controlLayers: L.Control.Layers;
 
   overlayLayersList = [];
+
+  thTable: Object;
 
   constructor(protected apiService: NetworkDiffServerService, protected diffstudyService: DiffstudyService) {
   }
@@ -98,6 +101,11 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   }
 
   ngOnInit(): void {
+    this.thTable = {
+      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
+    }
+    console.log("levels " + JSON.stringify(this.thTable));
+
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
@@ -108,10 +116,10 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
   networkDiff() {
     this.showSpinner = false;
-    this.populateMap(this.study['studyName'], Math.abs(this.threshold), Math.abs(this.voltageThreshold));
+    this.populateMap(this.study['studyName'], Math.abs(this.threshold), Math.abs(this.voltageThreshold), this.thTable);
   }
 
-  populateMap(studyName: string, threshold: number, voltageThreshold: number) {
+  populateMap(studyName: string, threshold: number, voltageThreshold: number, thTable: object) {
     this.showSpinner = true;
 
     this.overlayFeatureGroup.clearLayers();
@@ -125,7 +133,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     this.overlayLayersList = [];
 
     //retrieve the geoJsons
-    this.diffstudyService.getGeoJsons(studyName, threshold, voltageThreshold, ["SUBS", "LINES", "LINES-SIMPLE"]).subscribe(resGeoJsons => {
+    this.diffstudyService.getGeoJsons(studyName, threshold, voltageThreshold, ["SUBS", "LINES", "LINES-SIMPLE"], thTable).subscribe(resGeoJsons => {
       let layers = resGeoJsons['layers'];
 
       for (let i = 0; i < layers.length; i++) {
@@ -250,14 +258,14 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
       if (feature.properties && feature.properties.id && feature.properties.isDifferent) {
         if (feature.properties.isDifferent === "true") {
-          popupContent = "<p><b>line:</b> <span class='different'>" + feature.properties.id + "</span></p>";
+          popupContent = "<p><b>line:</b> <span class='same'>" + feature.properties.id + "</span></p>";
           popupContent += "<p><table class=\"table table-bordered table-sm\">" +
-            "<tr><td><b>delta P1: </b></td><td>" + feature.properties.t1_dp + "</td><td>(" + feature.properties.t1_dp_perc + ")</td></tr>" +
-            "<tr><td><b>delta Q1: </b></td><td>" + feature.properties.t1_dq + "</td><td>(" + feature.properties.t1_dq_perc + ")</td></tr>" +
-            "<tr><td><b>delta I1: </b></td><td>" + feature.properties.t1_di + "</td><td>(" + feature.properties.t1_di_perc + ")</td></tr>" +
-            "<tr><td><b>delta P2: </b></td><td>" + feature.properties.t2_dp + "</td><td>(" + feature.properties.t2_dp_perc + ")</td></tr>" +
-            "<tr><td><b>delta Q2: </b></td><td>" + feature.properties.t2_dq + "</td><td>(" + feature.properties.t2_dq_perc + ")</td></tr>" +
-            "<tr><td><b>delta I2: </b></td><td>" + feature.properties.t2_di + "</td><td>(" + feature.properties.t2_di_perc + ")</td></tr>" +
+            "<tr><td><b>delta P1: </b></td><td>" + feature.properties.t1_dp + "</td><td>(" + feature.properties.t1_dp_perc + "%)</td></tr>" +
+            "<tr><td><b>delta Q1: </b></td><td>" + feature.properties.t1_dq + "</td><td>(" + feature.properties.t1_dq_perc + "%)</td></tr>" +
+            "<tr><td><b>delta I1: </b></td><td>" + feature.properties.t1_di + "</td><td>(" + feature.properties.t1_di_perc + "%)</td></tr>" +
+            "<tr><td><b>delta P2: </b></td><td>" + feature.properties.t2_dp + "</td><td>(" + feature.properties.t2_dp_perc + "%)</td></tr>" +
+            "<tr><td><b>delta Q2: </b></td><td>" + feature.properties.t2_dq + "</td><td>(" + feature.properties.t2_dq_perc + "%)</td></tr>" +
+            "<tr><td><b>delta I2: </b></td><td>" + feature.properties.t2_di + "</td><td>(" + feature.properties.t2_di_perc + "%)</td></tr>" +
             "</table></p>";
         } else {
           popupContent = "<p><b>line:</b> <span class='same'>" + feature.properties.id + "</span></p>";
@@ -277,7 +285,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
   private addLegend(dmap: L.Map) {
     function getColor(d) {
-      return d === 'Same'  ? "#0000ff" :
+      return d === 'Same'  ? "black" :
         d === 'Different'  ? "#ff0000" :
               "#ff00ff";
     }
