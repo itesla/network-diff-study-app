@@ -50,11 +50,6 @@ export class DiffstudyVlcompareComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.thTable = {
-      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
-    }
-    console.log("levels " + JSON.stringify(this.thTable));
-
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
@@ -67,36 +62,6 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.voltageThresholdS = this.voltageThreshold;
 
     this.showSpinner = false;
-
-
-    this.thTable = {
-      "levels": [{
-        "id": "first",
-        "v": 20,
-        "i": 20,
-        "c": "green"
-      }, {
-        "id": "second",
-        "v": 40,
-        "i": 40,
-        "c": "yellow"
-      }, {
-        "id": "third",
-        "v": 60,
-        "i": 60,
-        "c": "orange"
-      }, {
-        "id": "fourth",
-        "v": 80,
-        "i": 80,
-        "c": "magenta"
-      }, {
-        "id": "fifth",
-        "v": 100,
-        "i": 100,
-        "c": "red"
-      }]
-    };
   }
 
   onChangeDiffStudy(study) {
@@ -150,6 +115,11 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.voltageThresholdS = Math.abs(this.voltageThreshold);
 
     this.showSpinner = true;
+
+    this.thTable = {
+      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
+    }
+    console.log("levels " + JSON.stringify(this.thTable));
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
       let network1Uuid = diffStudyRes['network1Uuid'];

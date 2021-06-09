@@ -101,11 +101,6 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
   }
 
   ngOnInit(): void {
-    this.thTable = {
-      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
-    }
-    console.log("levels " + JSON.stringify(this.thTable));
-
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
@@ -116,6 +111,10 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
 
   networkDiff() {
     this.showSpinner = false;
+    this.thTable = {
+      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
+    }
+    console.log("levels " + JSON.stringify(this.thTable));
     this.populateMap(this.study['studyName'], Math.abs(this.threshold), Math.abs(this.voltageThreshold), this.thTable);
   }
 
@@ -199,7 +198,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
           latLng, {
             icon: L.icon({
               iconSize: [30, 30],
-              iconUrl: feature.properties.isDifferent ? 'assets/substation_red.png' : 'assets/substation_blue.png'
+              iconUrl: feature.properties.isDifferent ? 'assets/substation_red.png' : 'assets/substation_black.png'
             }),
             title: feature.properties.id
           });
@@ -224,7 +223,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       if (feature.properties && feature.properties.id) {
         popupContent = "<p><b>substation:</b> ";
         if (feature.properties.isDifferent) {
-          popupContent += "<span class='different'>";
+          popupContent += "<span class='same'>";
         } else {
           popupContent += "<span class='same'>";
         }
@@ -293,7 +292,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
     let legend = new L.Control({position: 'bottomleft'});
     legend.onAdd = function (map) {
       let legendDiv = L.DomUtil.create('div', 'legenda-info legenda');
-      let label = ['<strong>Diff results</strong>'];
+      let label = ['<strong>Subs diff</strong>'];
       let cats = ['Same','Different'];
 
       for (let i = 0; i < cats.length; i++) {

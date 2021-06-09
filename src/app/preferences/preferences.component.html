@@ -1,19 +1,16 @@
 <div>
   <div class="sidebar">
     <p></p>
-    <h3 class="text-center font-weight-bold text-uppercase py-4">Levels list</h3>
-    <!--
-            <div id="table" class="table-editable">
-    -->
+    <h3 class="text-center font-weight-bold text-uppercase py-4">Threshold levels</h3>
     <!--      <span class="table-add float-right mb-3 mr-2">
             <button type="button" mdbBtn color="blue" rounded="true" size="sm" class="my-0" (click)="add()">Add</button>
           </span>-->
-    <table class="table text-center">
+    <table class="table table-bordered text-center">
       <tr>
-        <th class="text-center pt-lg-5">Id</th>
-        <th class="text-center pt-lg-5">I (%)</th>
-        <th class="text-center pt-lg-5">V (%)</th>
-        <th class="text-center pt-lg-5">Color</th>
+        <th class="table-dark text-center pt-lg-5">Level</th>
+        <th class="table-dark text-center pt-lg-5">Current/Power (%)</th>
+        <th class="table-dark text-center pt-lg-5">Voltage (%)</th>
+        <th class="table-dark text-center pt-lg-5">Color</th>
         <!--<th class="text-center">Action</th>-->
       </tr>
       <tr *ngFor="let level of levelList; let idx = index">
@@ -41,6 +38,9 @@
                   </td>-->
       </tr>
     </table>
+    <span class="table-add float-left mb-3 mr-2">
+      <button type="button" mdbBtn color="blue" rounded="true" size="sm" class="my-0" (click)="resetConfig()">Reset defaults</button>
+    </span>
   </div>
 </div>
 

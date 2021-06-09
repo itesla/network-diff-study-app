@@ -53,11 +53,6 @@ export class DiffstudySubcompareComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.thTable = {
-      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
-    }
-    console.log("levels " + JSON.stringify(this.thTable));
-
     this.diffstudyService.getDiffstudyList().subscribe(studiesListRes => {
       this.studies = studiesListRes;
     });
@@ -115,6 +110,11 @@ export class DiffstudySubcompareComponent implements OnInit {
     this.voltageThresholdS = Math.abs(this.voltageThreshold);
 
     this.showSpinner = true;
+
+    this.thTable = {
+      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
+    }
+    console.log("levels " + JSON.stringify(this.thTable));
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
       let network1Uuid = diffStudyRes['network1Uuid'];

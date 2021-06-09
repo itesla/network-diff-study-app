@@ -35,14 +35,18 @@ export class PreferencesComponent implements OnInit {
   }
 
   static setConfig(storage: Storage, config: string) {
-      storage.setItem('config', config);
+    storage.setItem('config', config);
   }
-
 
   ngOnInit(): void {
     this.levelList = JSON.parse(PreferencesComponent.getConfig(localStorage));
   }
 
+  resetConfig() {
+    let defaultConfig = JSON.stringify(PreferencesComponent.defaultLevelList);
+    PreferencesComponent.setConfig(localStorage, defaultConfig);
+    this.levelList = JSON.parse(PreferencesComponent.getConfig(localStorage));
+  }
 
   updateList(id: number, property: string, event: any) {
     const editField = event.target.textContent;
