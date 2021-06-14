@@ -9,11 +9,11 @@ export class PreferencesComponent implements OnInit {
 
   editField: string;
   static defaultLevelList: Array<any> = [
-    {id: 1, i: 0.1, v: 20, c: 'green'},
-    {id: 2, i: 2, v: 40, c: 'yellow'},
-    {id: 3, i: 3, v: 60, c: 'orange'},
-    {id: 4, i: 8, v: 80, c: 'magenta'},
-    {id: 5, i: 10, v: 100, c: 'red'},
+    {id: 1, i: 0.1, v: 0.001, c: 'green'},
+    {id: 2, i: 2, v: 0.05, c: 'yellow'},
+    {id: 3, i: 3, v: 0.1, c: 'orange'},
+    {id: 4, i: 8, v: 0.5, c: 'magenta'},
+    {id: 5, i: 10, v: 0.6, c: 'red'},
   ];
 
   awaitingLevelList: Array<any> = [];
