@@ -306,6 +306,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
         let level = levels[i];
         cats.push(level['i'] + ' ; ' + level['v']);
       }
+      legendDiv.innerHTML += label.push('<i style="background: black"></i> no differences');
       for (let i = 0; i < cats.length; i++) {
         legendDiv.innerHTML += label.push('<i style="background:' + levels[i]['c'] + '"></i> ' + (cats[i] ? cats[i] : '+'));
       }
