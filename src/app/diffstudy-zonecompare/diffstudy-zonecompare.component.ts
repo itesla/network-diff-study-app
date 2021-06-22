@@ -237,15 +237,9 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       let popupContent = "<p>no data available</p>";
 
       if (feature.properties && feature.properties.id) {
-        popupContent = "<p><b>substation:</b> ";
-        if (feature.properties.isDifferent) {
-          popupContent += "<span class='same'>";
-        } else {
-          popupContent += "<span class='same'>";
-        }
-          popupContent += feature.properties.id + "</span></p>";
+        popupContent = "<p><b>Substation:</b><span class='bold'> " + feature.properties.id + "</span></p>";
         if (feature.properties.vlevels) {
-          popupContent += "<b>voltage levels:</b>";
+          popupContent += "<b>Voltage levels:</b>";
           popupContent += "<table class=\"table table-bordered table-sm\">";
           feature.properties.vlevels.forEach(function (vlevel) {
             if (vlevel['isDifferent'] === "true") {
@@ -273,8 +267,8 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       let popupContent = "<p>no data available</p>";
 
       if (feature.properties && feature.properties.id && feature.properties.isDifferent) {
+        popupContent = "<p><b>Line:</b> <span class='bold'> " + feature.properties.id + "</span></p>";
         if (feature.properties.isDifferent === "true") {
-          popupContent = "<p><b>line:</b> <span class='same'>" + feature.properties.id + "</span></p>";
           popupContent += "<p><table class=\"table table-bordered table-sm\">" +
             "<tr><td><b>delta P1: </b></td><td>" + feature.properties.t1_dp + "</td><td>(" + feature.properties.t1_dp_perc + "%)</td></tr>" +
             "<tr><td><b>delta Q1: </b></td><td>" + feature.properties.t1_dq + "</td><td>(" + feature.properties.t1_dq_perc + "%)</td></tr>" +
@@ -284,7 +278,6 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
             "<tr><td><b>delta I2: </b></td><td>" + feature.properties.t2_di + "</td><td>(" + feature.properties.t2_di_perc + "%)</td></tr>" +
             "</table></p>";
         } else {
-          popupContent = "<p><b>line:</b> <span class='same'>" + feature.properties.id + "</span></p>";
           popupContent += "<p>no differences between the two networks for this line</p>";
         }
       }
@@ -311,7 +304,7 @@ export class DiffstudyZonecompareComponent implements OnInit, AfterViewInit, OnD
       let levels = JSON.parse(PreferencesComponent.getConfig(localStorage));
       for (let i = 0; i < levels.length; i++) {
         let level = levels[i];
-        cats.push(level['i'] + '% ; ' + level['v'] + '%');
+        cats.push(level['i'] + ' ; ' + level['v']);
       }
       for (let i = 0; i < cats.length; i++) {
         legendDiv.innerHTML += label.push('<i style="background:' + levels[i]['c'] + '"></i> ' + (cats[i] ? cats[i] : '+'));
