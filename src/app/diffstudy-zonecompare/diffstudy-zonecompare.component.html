@@ -13,9 +13,13 @@
     <ng-template #studyInContext>
       <div *ngIf="study['zone'].length != 0; else emptyZone">
         <div class="form-group">
-          <label>Threshold</label>
+          <label>Current threshold</label>
           <input class="form-control" type="number" min="0" step="0.01" [(ngModel)]="threshold" required #inThreshold="ngModel">
           <p class="alert alert-danger invalid" *ngIf="inThreshold.errors">invalid threshold value</p>
+          <p></p>
+          <label>Voltage threshold</label>
+          <input class="form-control" type="number" min="0" step="0.01" [(ngModel)]="voltageThreshold" required #inVoltageThreshold="ngModel">
+          <p class="alert alert-danger invalid" *ngIf="inVoltageThreshold.errors">invalid threshold value</p>
           <p></p>
           <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
         </div>

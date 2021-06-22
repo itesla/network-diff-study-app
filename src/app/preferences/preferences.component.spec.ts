@@ -6,21 +6,21 @@
  */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DiffstudyZonecompareComponent } from './diffstudy-zonecompare.component';
+import { PreferencesComponent } from './preferences.component';
 
-describe('DiffstudyZonecompareComponent', () => {
-  let component: DiffstudyZonecompareComponent;
-  let fixture: ComponentFixture<DiffstudyZonecompareComponent>;
+describe('PreferencesComponent', () => {
+  let component: PreferencesComponent;
+  let fixture: ComponentFixture<PreferencesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DiffstudyZonecompareComponent ]
+      declarations: [ PreferencesComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DiffstudyZonecompareComponent);
+    fixture = TestBed.createComponent(PreferencesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

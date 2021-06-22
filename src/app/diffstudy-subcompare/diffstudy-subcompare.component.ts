@@ -9,6 +9,7 @@ import {Component, OnInit} from '@angular/core';
 import {NetworkDiffServerService} from '../api-diff-client/api/api';
 import {DiffstudyService} from '../api-diffstudy-client/diffstudy.service';
 import {Diffstudy} from '../api-diffstudy-client/diffstudy';
+import {PreferencesComponent} from "../preferences/preferences.component";
 
 @Component({
   selector: 'comparevl',
@@ -38,7 +39,13 @@ export class DiffstudySubcompareComponent implements OnInit {
   threshold: number;
   thresholdS: number;
 
+  voltageThreshold: number;
+  voltageThresholdS: number;
+
+
   showSpinner: boolean = false;
+
+  thTable: Object;
 
   alertMessage: string = "Loading, please wait";
 
@@ -54,6 +61,9 @@ export class DiffstudySubcompareComponent implements OnInit {
 
     this.threshold = 0.0;
     this.thresholdS = this.threshold;
+
+    this.voltageThreshold = 0.0;
+    this.voltageThresholdS = this.voltageThreshold;
 
     this.showSpinner = false;
   }
@@ -97,14 +107,20 @@ export class DiffstudySubcompareComponent implements OnInit {
     this.showDiagram = true;
 
     this.thresholdS = Math.abs(this.threshold);
+    this.voltageThresholdS = Math.abs(this.voltageThreshold);
 
     this.showSpinner = true;
+
+    this.thTable = {
+      "levels": JSON.parse(PreferencesComponent.getConfig(localStorage))
+    }
+    console.log("levels " + JSON.stringify(this.thTable));
 
     this.diffstudyService.getDiffstudy(this.study['studyName']).subscribe(diffStudyRes => {
       let network1Uuid = diffStudyRes['network1Uuid'];
       let network2Uuid = diffStudyRes['network2Uuid'];
 
-      this.apiService.diffSubstationUsingGET(this.thresholdS, network1Uuid, network2Uuid, this.subId)
+      this.apiService.diffSubstationUsingGET(this.thresholdS, network1Uuid, network2Uuid, this.subId, this.voltageThreshold)
         .subscribe(diffResult => {
           //set global status
           this.network1 = network1Uuid;

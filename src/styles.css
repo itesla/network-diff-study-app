@@ -26,7 +26,11 @@
 }
 
 .subs-popup .same {
-  color: #0000ff;
+  color: #000000;
+}
+
+.subs-popup .bold {
+  font-weight: bold;
 }
 
 .lines-popup .leaflet-popup-content-wrapper {
@@ -38,8 +42,34 @@
 }
 
 .lines-popup .same {
-  color: #0000ff;
+  color: #000000;
 }
 
+.lines-popup .bold {
+  font-weight: bold;
+}
+
+.legenda-info
+{
+  padding: 6px 8px;
+  font: 14px/16px Verdana, Geneva, sans-serif;
+  background: white;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+
+.legenda {
+  line-height: 18px;
+  color: #555;
+}
+
+.legenda i {
+  width: 15px;
+  height: 15px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
 
 /* leaflet related section: end */

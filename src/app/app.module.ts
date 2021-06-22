@@ -30,6 +30,7 @@ import { DiffstudySubcompareComponent } from './diffstudy-subcompare/diffstudy-s
 import { SldDiffComponent } from './sld-diff/sld-diff.component';
 import { DiffstudyZonecompareComponent } from './diffstudy-zonecompare/diffstudy-zonecompare.component';
 import {BASE_PATH} from './api-diff-client/variables';
+import { PreferencesComponent } from './preferences/preferences.component';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import {BASE_PATH} from './api-diff-client/variables';
     EditDiffStudyComponent,
     DiffstudySubcompareComponent,
     SldDiffComponent,
-    DiffstudyZonecompareComponent
+    DiffstudyZonecompareComponent,
+    PreferencesComponent
   ],
     imports: [
         BrowserModule,
