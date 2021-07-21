@@ -26,6 +26,11 @@
                    type="number">
             <p *ngIf="inVoltageThreshold.errors" class="alert alert-danger invalid">invalid threshold value</p>
             <p></p>
+            <label>
+              <input [(ngModel)]="merged" type="checkbox"/>
+              Merged view (%)
+            </label>
+            <p></p>
             <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
           </ng-template>
         </div>
@@ -53,13 +58,16 @@
   <div>
     <div *ngIf="showDiagram == true">
       <hr/>
-      <span class="label">{{network1Names}}</span>
+      diff between <span class="label">{{network1Names}}</span> and <span class="label">{{network2Names}}</span>
       <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="vlIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="vl"
-                    sldId="svgVl1" [thTable]="thTable"></app-sld-diff>
-      <p></p>
-      <span class="label">{{network2Names}}</span>
-      <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="vl"
-                    sldId="svgVl2" [thTable]="thTable"></app-sld-diff>
+                    sldId="svgVl1" [thTable]="thTable" [merged]="mergedS"></app-sld-diff>
+      <!-- hidden instead of ngif; not efficient, but viewchild in component is not refreshed otherwise -->
+      <div [style.display]="mergedS ? 'none' : ''">
+        <p></p>
+        diff between <span class="label">{{network2Names}}</span> and <span class="label">{{network1Names}}</span>
+        <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="vlIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="vl"
+                      sldId="svgVl2" [thTable]="thTable" [merged]="mergedS"></app-sld-diff>
+      </div>
     </div>
 
     <div *ngIf="diffResult">

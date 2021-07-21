@@ -42,6 +42,8 @@ export class DiffstudySubcompareComponent implements OnInit {
   voltageThreshold: number;
   voltageThresholdS: number;
 
+  merged: boolean;
+  mergedS: boolean;
 
   showSpinner: boolean = false;
 
@@ -64,6 +66,9 @@ export class DiffstudySubcompareComponent implements OnInit {
 
     this.voltageThreshold = 0.0;
     this.voltageThresholdS = this.voltageThreshold;
+
+    this.merged = false;
+    this.mergedS = this.merged;
 
     this.showSpinner = false;
   }
@@ -108,6 +113,8 @@ export class DiffstudySubcompareComponent implements OnInit {
 
     this.thresholdS = Math.abs(this.threshold);
     this.voltageThresholdS = Math.abs(this.voltageThreshold);
+
+    this.mergedS = this.merged;
 
     this.showSpinner = true;
 
