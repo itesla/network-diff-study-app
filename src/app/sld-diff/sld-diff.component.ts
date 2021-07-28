@@ -19,7 +19,7 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() threshold: number;
   @Input() voltageThreshold: number;
   @Input() thTable: Object;
-  @Input() merged: boolean;
+  @Input() viewMode: number;
 
   svgPanZoom: any;
 
@@ -32,7 +32,7 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
       || (this.pType === undefined || this.pType.length == 0)
       || (this.threshold === undefined)
       || (this.voltageThreshold === undefined)
-      || (this.merged === undefined)) {
+      || (this.viewMode === undefined) || ((this.viewMode < 0) && (this.viewMode > 2))) {
       return false;
     } else {
       return true;
@@ -46,9 +46,21 @@ export class SldDiffComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngOnChanges() {
     if (this.inputDataOk() == true) {
-      this.dataContainer.nativeElement.innerHTML = "Loading ..."
+      this.dataContainer.nativeElement.innerHTML = "Loading ...";
 
-      let diffType = (this.merged) ? 'mergedsvgdiff' : 'svgdiff';
+      let diffType = "------";
+      switch (this.viewMode) {
+        case 0:
+          diffType = "svgdiff";
+          break;
+        case 1:
+          diffType = "mergedsvgdiff";
+          break;
+        case 2:
+          diffType = "mergedsvgdiffcur";
+          break;
+      }
+
       let compServiceType = (this.pType === 'vl') ? 'vl' : 'sub';
       let serviceUrl = `/v1/networks/${encodeURIComponent(String(this.network1))}/${diffType}/${encodeURIComponent(String(this.network2))}/${compServiceType}/${encodeURIComponent(String(this.pId))}/${encodeURIComponent(String(this.threshold))}/${encodeURIComponent(String(this.voltageThreshold))}`;
       let httpParams = new HttpParams().set("levels", encodeURIComponent(JSON.stringify(this.thTable)));

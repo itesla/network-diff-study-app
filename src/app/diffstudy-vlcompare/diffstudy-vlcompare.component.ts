@@ -40,8 +40,13 @@ export class DiffstudyVlcompareComponent implements OnInit {
   voltageThreshold: number;
   voltageThresholdS: number;
 
-  merged: boolean;
-  mergedS: boolean;
+  viewMode : number;
+  viewModeS : number;
+  viewModesOptions = [
+    { id: 0, label: "Standard" },
+    { id: 1, label: "Merged (Power %)" },
+    { id: 2, label: "Merged (Current %)" }
+  ];
 
   showSpinner: boolean = false;
 
@@ -64,8 +69,8 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.voltageThreshold = 0.0;
     this.voltageThresholdS = this.voltageThreshold;
 
-    this.merged = false;
-    this.mergedS = this.merged;
+    this.viewMode = 0; //standard
+    this.viewModeS = this.viewMode;
 
     this.showSpinner = false;
   }
@@ -120,7 +125,7 @@ export class DiffstudyVlcompareComponent implements OnInit {
     this.thresholdS = Math.abs(this.threshold);
     this.voltageThresholdS = Math.abs(this.voltageThreshold);
 
-    this.mergedS = this.merged;
+    this.viewModeS = this.viewMode;
 
     this.showSpinner = true;
 

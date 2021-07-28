@@ -24,10 +24,10 @@
             <input #inVoltageThreshold="ngModel" [(ngModel)]="voltageThreshold" class="form-control" min="0" required step="0.01" type="number">
             <p *ngIf="inVoltageThreshold.errors" class="alert alert-danger invalid">invalid threshold value</p>
             <p></p>
-            <label>
-              <input [(ngModel)]="merged" type="checkbox"/>
-              Merged view (%)
-            </label>
+            <label>Diff view mode</label>
+            <select name="viewMode" id="viewMode" class="form-control" [(ngModel)]="viewMode">
+              <option *ngFor="let viewMode of viewModesOptions;" [ngValue]="viewMode.id">{{viewMode.label}}</option>
+            </select>
             <p></p>
             <button (click)="networkDiff()" class="btn btn-info" type="button">Compare</button>
           </ng-template>
@@ -56,12 +56,14 @@
   <div *ngIf="showDiagram == true">
     <hr/>
     diff between <span class="label">{{network1Names}}</span> and <span class="label">{{network2Names}}</span>
-    <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg1" [thTable]="thTable" [merged]="mergedS"></app-sld-diff>
+    <app-sld-diff [network1]="network1s" [network2]="network2s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub"
+                  sldId="svg1" [thTable]="thTable" [viewMode]="viewModeS"></app-sld-diff>
     <!-- hidden instead of ngif; not efficient, but viewchild in component is not refreshed otherwise -->
-    <div [style.display]="mergedS ? 'none' : ''">
+    <div [style.display]="viewModeS ? 'none' : ''">
       <p></p>
       diff between <span class="label">{{network2Names}}</span> and <span class="label">{{network1Names}}</span>
-      <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub" sldId="svg2" [thTable]="thTable" [merged]="mergedS"></app-sld-diff>
+      <app-sld-diff [network1]="network2s" [network2]="network1s" [pId]="subIds" [threshold]="thresholdS" [voltageThreshold]="voltageThresholdS" pType="sub"
+                    sldId="svg2" [thTable]="thTable" [viewMode]="viewModeS"></app-sld-diff>
     </div>
   </div>
 
